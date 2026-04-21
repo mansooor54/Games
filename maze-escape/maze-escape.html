@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>هروب من المتاهة</title>
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi2YfYsdmI2Kgg2YXZhiDYp9mE2YXYqtin2YfYqSIsInNob3J0X25hbWUiOiLZh9ix2YjYqCIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMGYiLCJ0aGVtZV9jb2xvciI6IiMwYTBhMGYiLCJzdGFydF91cmwiOiIuIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInPjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nMzInIGZpbGw9JyMxYTBhMmUnLz48dGV4dCB4PSc5NicgeT0nMTIwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmb250LXNpemU9JzgwJz7wn4+wPC90ZXh0Pjwvc3ZnPiIsInNpemVzIjoiMTkyeDE5MiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ=="/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Segoe UI',Tahoma,sans-serif;color:#e2e8f0;overflow:hidden;user-select:none}
+.screen{display:none;flex-direction:column;align-items:center;justify-content:center;position:fixed;inset:0;z-index:5;overflow-y:auto}
+.screen.active{display:flex}
+#menu{background:linear-gradient(135deg,#0a0a1a 0%,#1a0a2e 50%,#0a1628 100%);gap:16px}
+#menu::before{content:'';position:absolute;inset:0;opacity:.04;pointer-events:none;background-image:repeating-linear-gradient(0deg,#fff 0px,transparent 1px,transparent 32px),repeating-linear-gradient(90deg,#fff 0px,transparent 1px,transparent 32px)}
+#menu .icon{font-size:64px}
+#menu h1{font-size:32px;font-weight:900;background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#menu p{color:#94a3b8;font-size:13px;text-align:center;max-width:360px;line-height:1.8}
+.btn{padding:12px 40px;font-size:16px;font-weight:800;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:scale(1.05)}
+.btn-primary{background:linear-gradient(135deg,#3b82f6,#8b5cf6);box-shadow:0 0 25px rgba(59,130,246,.4)}
+.btn-success{background:linear-gradient(135deg,#10b981,#3b82f6)}
+.btn-warning{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.btn-info{background:linear-gradient(135deg,#06b6d4,#0284c7)}
+.btn-small{padding:8px 20px;font-size:13px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#settings-screen,#shop-screen,#story-screen,#leaderboard-screen,#achievements-screen,#worldmap-screen,#editor-screen,#survival-screen{background:rgba(0,0,0,.92);gap:16px;z-index:20}
+.panel{background:rgba(30,41,59,.9);border:1px solid #334155;border-radius:12px;padding:20px;max-width:500px;width:90%;text-align:center;max-height:80vh;overflow-y:auto}
+.panel h2{font-size:20px;margin-bottom:12px;color:#fbbf24}
+.panel .row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e293b;font-size:14px}
+.panel .row:last-child{border:none}
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:10px;margin:6px 0;background:rgba(15,23,42,.6);border-radius:8px;font-size:13px}
+.shop-item .cost{color:#fbbf24;font-weight:700}
+.shop-item button:disabled{opacity:.4;cursor:not-allowed}
+#game-screen{z-index:5;padding:0}
+#game-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+canvas{border-radius:6px;display:block;image-rendering:pixelated}
+#touch-controls{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:6px}
+#touch-controls .row{display:flex;gap:4px}
+.tbtn{width:46px;height:46px;font-size:18px;background:rgba(59,130,246,.2);color:#60a5fa;border:1px solid rgba(59,130,246,.3);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.tbtn.shoot{background:rgba(251,191,36,.3);color:#fbbf24;width:50px}
+.tbtn.weapon{background:rgba(168,85,247,.3);color:#a855f7;width:50px;font-size:12px}
+.tbtn.ultimate{background:rgba(239,68,68,.3);color:#ef4444;width:50px;font-size:11px}
+#overlay{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.8);z-index:30;gap:14px}
+#overlay.show{display:flex}
+#overlay-msg{font-size:26px;font-weight:900}
+#overlay-sub{font-size:15px;color:#94a3b8}
+#overlay-score{font-size:16px;color:#fbbf24}
+.controls-hint{color:#64748b;font-size:12px;text-align:center;line-height:2}
+.controls-hint span{color:#fbbf24}
+#story-text{font-size:15px;color:#cbd5e1;line-height:2;max-width:380px;text-align:center;padding:20px}
+.lb-entry{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;border-bottom:1px solid #1e293b}
+.lb-entry .rank{color:#fbbf24;font-weight:700;min-width:30px}
+.achieve-item{display:flex;justify-content:space-between;align-items:center;padding:10px;margin:4px 0;border-radius:8px;font-size:13px}
+.achieve-item.unlocked{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3)}
+.achieve-item.locked{background:rgba(30,41,59,.4);border:1px solid #1e293b;opacity:.6}
+.achieve-name{font-weight:700;color:#fbbf24}
+.achieve-desc{color:#94a3b8;font-size:12px}
+#achievement-popup{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,rgba(34,197,94,.9),rgba(16,185,129,.9));color:#fff;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;z-index:100;transition:top .5s ease;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#achievement-popup.show{top:20px}
+.worldmap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px}
+.wm-cell{width:50px;height:50px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:default;border:2px solid #334155}
+.wm-cell.completed{background:rgba(34,197,94,.3);border-color:#22c55e;color:#22c55e}
+.wm-cell.current{background:rgba(59,130,246,.3);border-color:#3b82f6;color:#3b82f6;animation:pulse-border 1s infinite}
+.wm-cell.locked{background:rgba(30,41,59,.3);color:#475569}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 5px rgba(59,130,246,.3)}50%{box-shadow:0 0 15px rgba(59,130,246,.6)}}
+#editor-canvas{border:2px solid #334155;border-radius:6px;cursor:crosshair;display:block;margin:10px auto}
+.editor-toolbar{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.editor-toolbar .tbtn{width:auto;padding:6px 12px;font-size:12px;height:auto}
+.editor-toolbar .tbtn.active{background:rgba(251,191,36,.4);border-color:#fbbf24}
+.fullscreen-btn{position:fixed;top:8px;left:8px;z-index:50;background:rgba(0,0,0,.5);color:#fff;border:1px solid #334155;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px}
+</style>
+</head>
+<body>
+
+<button class="fullscreen-btn" id="fs-btn" title="ملء الشاشة">⛶</button>
+
+<div id="achievement-popup"></div>
+
+<div class="screen active" id="menu">
+  <div class="icon">🏰</div>
+  <h1>هروب من المتاهة</h1>
+  <p>اهرب من المتاهة المظلمة وتجنب الوحوش! اجمع المفاتيح وافتح الأبواب واعثر على المخرج</p>
+  <div class="controls-hint">
+    <span>WASD / الأسهم</span> — تحرك &nbsp; <span>مسافة</span> — إطلاق نار &nbsp; <span>Q</span> — تبديل السلاح &nbsp; <span>E</span> — القدرة الخارقة
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="start-btn">ابدأ اللعبة</button>
+    <button class="btn btn-danger" id="survival-btn">وضع البقاء</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-small btn-info" id="twoplayer-btn">لاعبان</button>
+    <button class="btn btn-small btn-success" id="editor-btn">محرر المستويات</button>
+    <button class="btn btn-small btn-primary" id="worldmap-btn">خريطة العالم</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-small btn-success" id="menu-settings-btn">الإعدادات</button>
+    <button class="btn btn-small btn-warning" id="menu-lb-btn">المتصدرون</button>
+    <button class="btn btn-small btn-info" id="menu-achieve-btn">الإنجازات</button>
+  </div>
+</div>
+
+<div class="screen" id="settings-screen">
+  <div class="panel">
+    <h2>الإعدادات</h2>
+    <div class="row"><span>الصوت</span><button class="btn btn-small btn-primary" id="snd-toggle">مفعّل</button></div>
+    <div class="row"><span>الصعوبة</span><button class="btn btn-small btn-warning" id="diff-toggle">عادي</button></div>
+  </div>
+  <button class="btn btn-primary" id="settings-back">رجوع</button>
+</div>
+
+<div class="screen" id="leaderboard-screen">
+  <div class="panel">
+    <h2>أفضل النتائج</h2>
+    <div id="lb-list"></div>
+  </div>
+  <button class="btn btn-primary" id="lb-back">رجوع</button>
+</div>
+
+<div class="screen" id="achievements-screen">
+  <div class="panel">
+    <h2>الإنجازات</h2>
+    <div id="achieve-list"></div>
+  </div>
+  <button class="btn btn-primary" id="achieve-back">رجوع</button>
+</div>
+
+<div class="screen" id="worldmap-screen">
+  <div class="panel">
+    <h2>خريطة العالم</h2>
+    <div id="worldmap-grid" class="worldmap-grid"></div>
+  </div>
+  <button class="btn btn-primary" id="worldmap-back">رجوع</button>
+</div>
+
+<div class="screen" id="story-screen">
+  <div class="panel">
+    <h2 id="story-title"></h2>
+    <div id="story-text"></div>
+  </div>
+  <button class="btn btn-primary" id="story-continue">متابعة</button>
+</div>
+
+<div class="screen" id="shop-screen">
+  <div class="panel">
+    <h2>المتجر</h2>
+    <div id="shop-score" style="color:#fbbf24;margin-bottom:10px;font-size:14px"></div>
+    <div id="shop-items"></div>
+  </div>
+  <button class="btn btn-success" id="shop-continue">المستوى التالي</button>
+</div>
+
+<div class="screen" id="editor-screen">
+  <div class="panel" style="max-width:700px">
+    <h2>محرر المستويات</h2>
+    <div class="editor-toolbar" id="editor-toolbar"></div>
+    <canvas id="editor-canvas" width="400" height="304"></canvas>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-small btn-success" id="editor-save">حفظ</button>
+      <button class="btn btn-small btn-primary" id="editor-play">تجربة</button>
+      <button class="btn btn-small btn-warning" id="editor-clear">مسح</button>
+      <button class="btn btn-small btn-danger" id="editor-load">تحميل</button>
+    </div>
+    <div id="editor-saved-list" style="margin-top:8px"></div>
+  </div>
+  <button class="btn btn-primary" id="editor-back">رجوع</button>
+</div>
+
+<div class="screen" id="game-screen">
+  <canvas id="canvas"></canvas>
+  <div id="touch-controls">
+    <div class="row"><button class="tbtn" id="t-up">▲</button></div>
+    <div class="row">
+      <button class="tbtn" id="t-left">◄</button>
+      <button class="tbtn shoot" id="t-shoot">🔫</button>
+      <button class="tbtn" id="t-right">►</button>
+    </div>
+    <div class="row">
+      <button class="tbtn" id="t-down">▼</button>
+      <button class="tbtn weapon" id="t-weapon">سلاح</button>
+      <button class="tbtn ultimate" id="t-ult">خارقة</button>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <button class="tbtn" id="quit-btn" style="width:auto;padding:6px 20px;background:rgba(239,68,68,.3);color:#ef4444;border-color:rgba(239,68,68,.4);font-size:13px;font-weight:700">إنهاء اللعبة</button>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div id="overlay-msg"></div>
+  <div id="overlay-sub"></div>
+  <div id="overlay-score"></div>
+  <div class="btn-row">
+    <button class="btn btn-success" id="next-btn" style="display:none">المستوى التالي</button>
+    <button class="btn btn-primary" id="retry-btn">حاول مرة أخرى</button>
+    <button class="btn btn-warning" id="menu-btn-overlay">القائمة</button>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// MAZE ESCAPE GAME - Complete Rewrite with All Features
+// =====================================================================
+'use strict';
+
+// ── Constants ────────────────────────────────────────────────────────
+const TILE = 32, COLS = 25, ROWS = 19;
+const W = COLS * TILE, H = ROWS * TILE;
+const WALL = 1, PATH = 0, EXIT = 2, DOOR_R = 3, DOOR_B = 4, DOOR_G = 5;
+const TRAP_SPIKE = 10, TRAP_LAVA = 11, TRAP_ICE = 12;
+const BUTTON_TILE = 13;
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = W; canvas.height = H;
+
+// ── Settings ─────────────────────────────────────────────────────────
+let settings = JSON.parse(localStorage.getItem('maze_settings') || '{"sound":true,"difficulty":1}');
+const DIFF_NAMES = ['سهل','عادي','صعب'];
+const DIFF_MULT = [0.7, 1.0, 1.4];
+
+// ── Audio Engine (Web Audio API) ─────────────────────────────────────
+let audioCtx = null;
+function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+
+function playSound(type){
+  if(!settings.sound) return;
+  const ac = ensureAudio();
+  const now = ac.currentTime;
+  const g = ac.createGain();
+  g.connect(ac.destination);
+
+  if(type==='shoot'){
+    const o=ac.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(800,now);o.frequency.exponentialRampToValueAtTime(200,now+.08);
+    g.gain.setValueAtTime(.15,now);g.gain.exponentialRampToValueAtTime(.001,now+.1);
+    o.connect(g);o.start(now);o.stop(now+.1);
+  } else if(type==='shotgun'){
+    for(let i=0;i<3;i++){const o=ac.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(600+Math.random()*400,now+i*.02);o.frequency.exponentialRampToValueAtTime(100,now+.12);const g2=ac.createGain();g2.gain.setValueAtTime(.1,now);g2.gain.exponentialRampToValueAtTime(.001,now+.12);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.02);o.stop(now+.15);}
+    return;
+  } else if(type==='rapid'){
+    const o=ac.createOscillator();o.type='square';o.frequency.setValueAtTime(1200,now);o.frequency.exponentialRampToValueAtTime(400,now+.05);
+    g.gain.setValueAtTime(.08,now);g.gain.exponentialRampToValueAtTime(.001,now+.06);
+    o.connect(g);o.start(now);o.stop(now+.06);
+  } else if(type==='monster_die'){
+    const o=ac.createOscillator();o.type='square';o.frequency.setValueAtTime(400,now);o.frequency.exponentialRampToValueAtTime(80,now+.3);
+    g.gain.setValueAtTime(.15,now);g.gain.exponentialRampToValueAtTime(.001,now+.3);
+    o.connect(g);o.start(now);o.stop(now+.3);
+  } else if(type==='pickup'){
+    const o=ac.createOscillator();o.type='sine';o.frequency.setValueAtTime(500,now);o.frequency.exponentialRampToValueAtTime(1200,now+.15);
+    g.gain.setValueAtTime(.12,now);g.gain.exponentialRampToValueAtTime(.001,now+.2);
+    o.connect(g);o.start(now);o.stop(now+.2);
+  } else if(type==='damage'){
+    const o=ac.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(150,now);o.frequency.exponentialRampToValueAtTime(50,now+.2);
+    g.gain.setValueAtTime(.2,now);g.gain.exponentialRampToValueAtTime(.001,now+.25);
+    o.connect(g);o.start(now);o.stop(now+.25);
+  } else if(type==='win'){
+    [523,659,784,1047].forEach((f,i)=>{const o=ac.createOscillator();o.type='sine';o.frequency.value=f;const g2=ac.createGain();g2.gain.setValueAtTime(.1,now+i*.12);g2.gain.exponentialRampToValueAtTime(.001,now+i*.12+.3);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.12);o.stop(now+i*.12+.3);});
+    return;
+  } else if(type==='lose'){
+    [300,250,200,150].forEach((f,i)=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;const g2=ac.createGain();g2.gain.setValueAtTime(.12,now+i*.15);g2.gain.exponentialRampToValueAtTime(.001,now+i*.15+.25);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.15);o.stop(now+i*.15+.25);});
+    return;
+  } else if(type==='footstep'){
+    const o=ac.createOscillator();o.type='triangle';o.frequency.setValueAtTime(80+Math.random()*40,now);
+    g.gain.setValueAtTime(.03,now);g.gain.exponentialRampToValueAtTime(.001,now+.05);
+    o.connect(g);o.start(now);o.stop(now+.05);
+  } else if(type==='key'){
+    [800,1000,1200].forEach((f,i)=>{const o=ac.createOscillator();o.type='sine';o.frequency.value=f;const g2=ac.createGain();g2.gain.setValueAtTime(.1,now+i*.08);g2.gain.exponentialRampToValueAtTime(.001,now+i*.08+.15);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.08);o.stop(now+i*.08+.15);});
+    return;
+  } else if(type==='door'){
+    const o=ac.createOscillator();o.type='square';o.frequency.setValueAtTime(200,now);o.frequency.exponentialRampToValueAtTime(600,now+.2);
+    g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.25);
+    o.connect(g);o.start(now);o.stop(now+.25);
+  } else if(type==='boss_die'){
+    for(let i=0;i<5;i++){const o=ac.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(300-i*40,now+i*.1);o.frequency.exponentialRampToValueAtTime(50,now+i*.1+.2);const g2=ac.createGain();g2.gain.setValueAtTime(.15,now+i*.1);g2.gain.exponentialRampToValueAtTime(.001,now+i*.1+.25);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.1);o.stop(now+i*.1+.25);}
+    return;
+  } else if(type==='boss_attack'){
+    const o=ac.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(100,now);o.frequency.exponentialRampToValueAtTime(300,now+.15);o.frequency.exponentialRampToValueAtTime(80,now+.3);
+    g.gain.setValueAtTime(.12,now);g.gain.exponentialRampToValueAtTime(.001,now+.35);
+    o.connect(g);o.start(now);o.stop(now+.35);
+  } else if(type==='ultimate'){
+    [200,400,600,800,1000].forEach((f,i)=>{const o=ac.createOscillator();o.type='sine';o.frequency.value=f;const g2=ac.createGain();g2.gain.setValueAtTime(.12,now+i*.06);g2.gain.exponentialRampToValueAtTime(.001,now+i*.06+.3);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.06);o.stop(now+i*.06+.3);});
+    return;
+  } else if(type==='rescue'){
+    [600,800,1000,1200].forEach((f,i)=>{const o=ac.createOscillator();o.type='sine';o.frequency.value=f;const g2=ac.createGain();g2.gain.setValueAtTime(.1,now+i*.1);g2.gain.exponentialRampToValueAtTime(.001,now+i*.1+.2);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.1);o.stop(now+i*.1+.2);});
+    return;
+  } else if(type==='trap'){
+    const o=ac.createOscillator();o.type='square';o.frequency.setValueAtTime(100,now);o.frequency.exponentialRampToValueAtTime(60,now+.15);
+    g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.2);
+    o.connect(g);o.start(now);o.stop(now+.2);
+  } else if(type==='button'){
+    const o=ac.createOscillator();o.type='sine';o.frequency.setValueAtTime(600,now);o.frequency.exponentialRampToValueAtTime(900,now+.1);
+    g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.15);
+    o.connect(g);o.start(now);o.stop(now+.15);
+  } else if(type==='achieve'){
+    [523,659,784,1047,1318].forEach((f,i)=>{const o=ac.createOscillator();o.type='sine';o.frequency.value=f;const g2=ac.createGain();g2.gain.setValueAtTime(.08,now+i*.1);g2.gain.exponentialRampToValueAtTime(.001,now+i*.1+.25);o.connect(g2);g2.connect(ac.destination);o.start(now+i*.1);o.stop(now+i*.1+.25);});
+    return;
+  }
+}
+
+// ── Level Themes ─────────────────────────────────────────────────────
+function getTheme(lvl){
+  if(lvl<=3) return {name:'الزنزانة',wall:'#1e293b',wallBorder:'#334155',wallShadow:'#0f172a',floor:'#0f172a',bg:'#080e1c',accent:'#3b82f6',fogColor:'rgba(5,10,25,0.97)'};
+  if(lvl<=6) return {name:'الكهف',wall:'#44290a',wallBorder:'#6b3a10',wallShadow:'#2a1805',floor:'#1a0f04',bg:'#0d0802',accent:'#f59e0b',fogColor:'rgba(13,8,2,0.97)'};
+  if(lvl<=9) return {name:'الغابة',wall:'#1a3a1a',wallBorder:'#2d5a2d',wallShadow:'#0d1f0d',floor:'#0a1f0a',bg:'#050f05',accent:'#22c55e',fogColor:'rgba(5,15,5,0.97)'};
+  return {name:'القلعة',wall:'#2d1854',wallBorder:'#4a2080',wallShadow:'#1a0e33',floor:'#120a25',bg:'#0a0518',accent:'#a855f7',fogColor:'rgba(10,5,24,0.97)'};
+}
+
+// ── Story Texts ──────────────────────────────────────────────────────
+const STORIES = [
+  'استيقظت في زنزانة مظلمة... يجب أن تجد طريقك للخروج. احذر من الوحوش!',
+  'تعمقت أكثر في الظلام. الوحوش تزداد قوة. اعثر على المفاتيح لفتح الأبواب!',
+  'الهواء بارد ورطب. تسمع أصوات مخيفة من كل اتجاه...',
+  'دخلت الكهوف العميقة. الأرض تهتز تحت قدميك...',
+  'الكهف يضيق. الوحوش أكثر شراسة هنا!',
+  'وصلت إلى قلب الكهف. هناك شيء كبير ينتظرك...',
+  'الأشجار الكثيفة تحجب الضوء. الغابة مليئة بالمخاطر!',
+  'تسمع عواء الذئاب. الطريق يزداد صعوبة...',
+  'أنت قريب من نهاية الغابة. لكن أقوى الوحوش هنا!',
+  'وصلت إلى القلعة المسحورة! المعركة النهائية تنتظرك...'
+];
+
+// ── Achievement System ───────────────────────────────────────────────
+const ACHIEVEMENT_DEFS = [
+  {id:'killer',    name:'القاتل',      desc:'اقتل 100 وحش', check: st => st.totalKills >= 100},
+  {id:'invincible',name:'لا يُقهر',    desc:'أكمل مستوى بدون ضرر', check: st => st.levelNoDamage},
+  {id:'speedy',    name:'سريع',        desc:'أكمل مستوى في أقل من 30 ثانية', check: st => st.levelUnder30s},
+  {id:'rich',      name:'ثري',         desc:'اجمع 1000 نقطة', check: st => st.totalScore >= 1000},
+  {id:'bosshunter',name:'صياد الزعماء',desc:'اهزم 3 زعماء', check: st => st.bossesKilled >= 3},
+  {id:'rescuer',   name:'المنقذ',      desc:'أنقذ 10 شخصيات', check: st => st.totalRescued >= 10},
+  {id:'survivor',  name:'الناجي',      desc:'انجُ 10 موجات في وضع البقاء', check: st => st.maxSurvivalWave >= 10},
+];
+
+function getAchievements(){ return JSON.parse(localStorage.getItem('maze_achievements') || '{}'); }
+function getAchieveStats(){ return JSON.parse(localStorage.getItem('maze_achieve_stats') || '{"totalKills":0,"totalScore":0,"bossesKilled":0,"totalRescued":0,"maxSurvivalWave":0,"levelNoDamage":false,"levelUnder30s":false}'); }
+function saveAchieveStats(st){ localStorage.setItem('maze_achieve_stats', JSON.stringify(st)); }
+
+function checkAchievements(){
+  const unlocked = getAchievements();
+  const stats = getAchieveStats();
+  for(const a of ACHIEVEMENT_DEFS){
+    if(!unlocked[a.id] && a.check(stats)){
+      unlocked[a.id] = true;
+      localStorage.setItem('maze_achievements', JSON.stringify(unlocked));
+      showAchievementPopup(a.name, a.desc);
+    }
+  }
+}
+
+function showAchievementPopup(name, desc){
+  playSound('achieve');
+  const popup = document.getElementById('achievement-popup');
+  popup.innerHTML = `🏆 ${name}<br><span style="font-size:12px;font-weight:400">${desc}</span>`;
+  popup.classList.add('show');
+  setTimeout(()=> popup.classList.remove('show'), 3000);
+}
+
+function showAchievementsScreen(){
+  const unlocked = getAchievements();
+  const el = document.getElementById('achieve-list');
+  el.innerHTML = ACHIEVEMENT_DEFS.map(a => {
+    const done = unlocked[a.id];
+    return `<div class="achieve-item ${done?'unlocked':'locked'}"><div><div class="achieve-name">${done?'🏆':'🔒'} ${a.name}</div><div class="achieve-desc">${a.desc}</div></div><div>${done?'✅':''}</div></div>`;
+  }).join('');
+  showScreen('achievements-screen');
+}
+
+// ── World Map ────────────────────────────────────────────────────────
+function getCompletedLevels(){ return JSON.parse(localStorage.getItem('maze_completed') || '[]'); }
+function markLevelCompleted(lvl){
+  const c = getCompletedLevels();
+  if(!c.includes(lvl)){c.push(lvl);localStorage.setItem('maze_completed', JSON.stringify(c));}
+}
+
+function showWorldMap(){
+  const completed = getCompletedLevels();
+  const maxLevel = Math.max(1, ...completed.map(x=>x+1), persist.level||1);
+  const grid = document.getElementById('worldmap-grid');
+  const total = 15;
+  grid.innerHTML = '';
+  for(let i=1;i<=total;i++){
+    const cell = document.createElement('div');
+    cell.className = 'wm-cell ' + (completed.includes(i)?'completed': i<=maxLevel?'current':'locked');
+    const theme = getTheme(i);
+    cell.textContent = i;
+    cell.title = theme.name;
+    if(i%3===0 && i>0) cell.textContent = i + '👑';
+    grid.appendChild(cell);
+  }
+  showScreen('worldmap-screen');
+}
+
+// ── Leaderboard ──────────────────────────────────────────────────────
+function getLeaderboard(){ return JSON.parse(localStorage.getItem('maze_lb')||'[]'); }
+function saveScore(score){
+  const lb = getLeaderboard();
+  lb.push({score, date: new Date().toLocaleDateString('ar-EG')});
+  lb.sort((a,b)=>b.score-a.score);
+  localStorage.setItem('maze_lb', JSON.stringify(lb.slice(0,10)));
+}
+function showLeaderboard(){
+  const lb = getLeaderboard();
+  const el = document.getElementById('lb-list');
+  if(lb.length===0){ el.innerHTML='<p style="color:#64748b;padding:10px">لا توجد نتائج بعد</p>'; }
+  else { el.innerHTML = lb.map((e,i)=>`<div class="lb-entry"><span class="rank">#${i+1}</span><span>${e.score} نقطة</span><span style="color:#64748b;font-size:12px">${e.date||''}</span></div>`).join(''); }
+  showScreen('leaderboard-screen');
+}
+
+// ── Screen Management ────────────────────────────────────────────────
+let prevScreen = 'menu';
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── Weapon Definitions ───────────────────────────────────────────────
+const WEAPONS = [
+  {id:'pistol', name:'مسدس', fireRate:250, damage:1, speed:8, spread:0, count:1, color:'#fbbf24'},
+  {id:'shotgun', name:'بندقية', fireRate:600, damage:1, speed:7, spread:0.35, count:5, color:'#f97316'},
+  {id:'rapid', name:'رشاش', fireRate:100, damage:0.5, speed:10, spread:0.08, count:1, color:'#22d3ee'}
+];
+
+// ── Game State ───────────────────────────────────────────────────────
+let state = null, frame = 0, raf = null;
+const keys = {};
+let footstepTimer = 0;
+let gameMode = 'campaign'; // 'campaign', 'survival', 'twoplayer', 'custom'
+let screenShake = {x:0, y:0, intensity:0};
+let levelFade = {alpha:0, dir:0, callback:null}; // cinematic fade
+
+// Persistent upgrades across levels
+let persist = { lives:3, weapons:[0], currentWeapon:0, speedBonus:0, score:0, level:1 };
+
+// Two player state
+let player2State = null;
+const keys2 = {};
+
+// Survival mode stats
+let survivalStats = {wave:0, score:0, monstersKilled:0};
+
+// ── Screen Shake ─────────────────────────────────────────────────────
+function triggerScreenShake(intensity){
+  screenShake.intensity = Math.max(screenShake.intensity, intensity);
+}
+function updateScreenShake(){
+  if(screenShake.intensity > 0.5){
+    screenShake.x = (Math.random()-0.5) * screenShake.intensity * 2;
+    screenShake.y = (Math.random()-0.5) * screenShake.intensity * 2;
+    screenShake.intensity *= 0.85;
+  } else {
+    screenShake.x = 0; screenShake.y = 0; screenShake.intensity = 0;
+  }
+}
+
+// ── Cinematic Level Fade ─────────────────────────────────────────────
+function startFadeOut(callback){
+  levelFade.alpha = 0; levelFade.dir = 1; levelFade.callback = callback;
+}
+function startFadeIn(){
+  levelFade.alpha = 1; levelFade.dir = -1; levelFade.callback = null;
+}
+function updateFade(){
+  if(levelFade.dir !== 0){
+    levelFade.alpha += levelFade.dir * 0.03;
+    if(levelFade.alpha >= 1 && levelFade.dir === 1){
+      levelFade.alpha = 1; levelFade.dir = 0;
+      if(levelFade.callback) { levelFade.callback(); levelFade.callback = null; startFadeIn(); }
+    }
+    if(levelFade.alpha <= 0 && levelFade.dir === -1){
+      levelFade.alpha = 0; levelFade.dir = 0;
+    }
+  }
+}
+function drawFade(ctx){
+  if(levelFade.alpha > 0){
+    ctx.fillStyle = `rgba(0,0,0,${levelFade.alpha})`;
+    ctx.fillRect(0,0,W,H);
+  }
+}
+
+// ── Maze Generation ──────────────────────────────────────────────────
+function generateMaze(cols, rows){
+  const maze = Array.from({length:rows},()=>Array(cols).fill(WALL));
+  const stack = [[1,1]];
+  maze[1][1] = PATH;
+  while(stack.length>0){
+    const [x,y] = stack[stack.length-1];
+    const dirs = [[0,-2],[0,2],[-2,0],[2,0]];
+    for(let i=dirs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[dirs[i],dirs[j]]=[dirs[j],dirs[i]];}
+    let found = false;
+    for(const [dx,dy] of dirs){
+      const nx=x+dx, ny=y+dy;
+      if(nx>0&&nx<cols-1&&ny>0&&ny<rows-1&&maze[ny][nx]===WALL){
+        maze[y+dy/2][x+dx/2]=PATH; maze[ny][nx]=PATH;
+        stack.push([nx,ny]); found=true; break;
+      }
+    }
+    if(!found) stack.pop();
+  }
+  for(let i=0;i<Math.floor(cols*rows*0.03);i++){
+    const x=2+Math.floor(Math.random()*(cols-4));
+    const y=2+Math.floor(Math.random()*(rows-4));
+    if(maze[y][x]===WALL){
+      let adj=0;
+      if(y>0&&maze[y-1][x]===PATH)adj++;
+      if(y<rows-1&&maze[y+1][x]===PATH)adj++;
+      if(x>0&&maze[y][x-1]===PATH)adj++;
+      if(x<cols-1&&maze[y][x+1]===PATH)adj++;
+      if(adj>=2) maze[y][x]=PATH;
+    }
+  }
+  maze[rows-2][cols-2]=EXIT;
+  return maze;
+}
+
+// ── Place Doors & Keys ───────────────────────────────────────────────
+function placeDoors(maze, level){
+  const doors=[], doorKeys=[];
+  if(level<2) return {doors, doorKeys};
+
+  const numDoors = Math.min(3, Math.floor(level/2));
+  const doorTypes = [DOOR_R, DOOR_B, DOOR_G];
+  const doorColors = ['#ef4444','#3b82f6','#22c55e'];
+  const keyEmojis = ['🔴','🔵','🟢'];
+
+  const pathCells = [];
+  for(let y=2;y<ROWS-2;y++) for(let x=2;x<COLS-2;x++){
+    if(maze[y][x]===PATH && !(x===1&&y===1) && !(x===COLS-2&&y===ROWS-2)){
+      const h = maze[y][x-1]===WALL && maze[y][x+1]===WALL;
+      const v = maze[y-1]&&maze[y-1][x]===WALL && maze[y+1]&&maze[y+1][x]===WALL;
+      if(h||v) pathCells.push({x,y,dist:Math.abs(x-1)+Math.abs(y-1)});
+    }
+  }
+  pathCells.sort((a,b)=>a.dist-b.dist);
+
+  const mid = Math.floor(pathCells.length*0.3);
+  const candidates = pathCells.slice(mid, mid+Math.max(20,pathCells.length-mid));
+  candidates.sort(()=>Math.random()-.5);
+
+  for(let i=0;i<numDoors&&i<candidates.length;i++){
+    const c = candidates[i];
+    maze[c.y][c.x] = doorTypes[i];
+    doors.push({x:c.x, y:c.y, type:doorTypes[i], color:doorColors[i], open:false});
+
+    const keyCandidates = [];
+    for(let y=1;y<ROWS-1;y++) for(let x=1;x<COLS-1;x++){
+      if(maze[y][x]===PATH && !(x===1&&y===1)){
+        const d = Math.abs(x-1)+Math.abs(y-1);
+        if(d < c.dist && d > 3) keyCandidates.push({x,y});
+      }
+    }
+    if(keyCandidates.length>0){
+      const kc = keyCandidates[Math.floor(Math.random()*keyCandidates.length)];
+      doorKeys.push({x:kc.x*TILE+TILE/2, y:kc.y*TILE+TILE/2, type:doorTypes[i], color:doorColors[i], emoji:keyEmojis[i], collected:false});
+    }
+  }
+  return {doors, doorKeys};
+}
+
+// ── Floor Traps ──────────────────────────────────────────────────────
+function placeTraps(maze, level){
+  const traps = [];
+  if(level < 2) return traps;
+  const pathCells = [];
+  for(let y=2;y<ROWS-2;y++) for(let x=2;x<COLS-2;x++){
+    if(maze[y][x]===PATH && !(x===1&&y===1) && !(x===COLS-2&&y===ROWS-2))
+      pathCells.push({x,y});
+  }
+  pathCells.sort(()=>Math.random()-.5);
+  const count = Math.min(pathCells.length, 3 + Math.floor(level * 1.5));
+  const trapTypes = [TRAP_SPIKE, TRAP_LAVA, TRAP_ICE];
+  for(let i=0;i<count&&i<pathCells.length;i++){
+    const c = pathCells[i];
+    const tt = trapTypes[Math.floor(Math.random()*trapTypes.length)];
+    traps.push({x:c.x, y:c.y, type:tt, active:true, timer:0});
+  }
+  return traps;
+}
+
+// ── Pressure Buttons & Secret Passages ───────────────────────────────
+function placeButtons(maze, level){
+  const buttons = [];
+  if(level < 3) return buttons;
+  const pathCells = [];
+  for(let y=2;y<ROWS-2;y++) for(let x=2;x<COLS-2;x++){
+    if(maze[y][x]===PATH && !(x===1&&y===1) && !(x===COLS-2&&y===ROWS-2))
+      pathCells.push({x,y});
+  }
+  pathCells.sort(()=>Math.random()-.5);
+
+  const wallCells = [];
+  for(let y=2;y<ROWS-2;y++) for(let x=2;x<COLS-2;x++){
+    if(maze[y][x]===WALL){
+      let adjPath = 0;
+      if(maze[y-1]&&maze[y-1][x]===PATH)adjPath++;
+      if(maze[y+1]&&maze[y+1][x]===PATH)adjPath++;
+      if(maze[y][x-1]===PATH)adjPath++;
+      if(maze[y][x+1]===PATH)adjPath++;
+      if(adjPath >= 1 && adjPath <= 2) wallCells.push({x,y});
+    }
+  }
+  wallCells.sort(()=>Math.random()-.5);
+
+  const count = Math.min(2, pathCells.length, wallCells.length);
+  for(let i=0;i<count;i++){
+    buttons.push({
+      bx: pathCells[i].x, by: pathCells[i].y,
+      wx: wallCells[i].x, wy: wallCells[i].y,
+      pressed: false
+    });
+  }
+  return buttons;
+}
+
+// ── Rescue NPCs ──────────────────────────────────────────────────────
+function placeNPCs(maze, level){
+  const npcs = [];
+  if(level < 2) return npcs;
+  const deadEnds = [];
+  for(let y=1;y<ROWS-1;y++) for(let x=1;x<COLS-1;x++){
+    if(maze[y][x]===PATH && !(x===1&&y===1) && !(x===COLS-2&&y===ROWS-2)){
+      let exits = 0;
+      if(maze[y-1]&&maze[y-1][x]!==WALL)exits++;
+      if(maze[y+1]&&maze[y+1][x]!==WALL)exits++;
+      if(maze[y][x-1]!==WALL)exits++;
+      if(maze[y][x+1]!==WALL)exits++;
+      if(exits === 1) deadEnds.push({x,y});
+    }
+  }
+  deadEnds.sort(()=>Math.random()-.5);
+  const count = Math.min(deadEnds.length, 1 + Math.floor(level/3));
+  for(let i=0;i<count;i++){
+    const c = deadEnds[i];
+    npcs.push({x:c.x*TILE+TILE/2, y:c.y*TILE+TILE/2, rescued:false, bob:Math.random()*Math.PI*2});
+  }
+  return npcs;
+}
+
+// ── Spawn Items ──────────────────────────────────────────────────────
+function spawnItems(maze, level){
+  const cells=[];
+  for(let y=1;y<ROWS-1;y++) for(let x=1;x<COLS-1;x++){
+    if(maze[y][x]===PATH && !(x===1&&y===1) && Math.abs(x-COLS+2)+Math.abs(y-ROWS+2)>3)
+      cells.push({x,y});
+  }
+  cells.sort(()=>Math.random()-.5);
+
+  const items=[];
+  const types = [
+    {type:'health', emoji:'❤️', color:'#ef4444'},
+    {type:'shield', emoji:'🛡️', color:'#60a5fa'},
+    {type:'speed',  emoji:'⚡', color:'#fbbf24'},
+    {type:'coin',   emoji:'💰', color:'#f59e0b'}
+  ];
+
+  const count = Math.min(cells.length, 5 + level);
+  for(let i=0;i<count;i++){
+    const c=cells[i];
+    const t = i<2 ? types[3] : types[Math.floor(Math.random()*types.length)];
+    items.push({x:c.x*TILE+TILE/2, y:c.y*TILE+TILE/2, ...t, active:true, bob:Math.random()*Math.PI*2});
+  }
+  return items;
+}
+
+// ── Monster Types ────────────────────────────────────────────────────
+function createMonster(x, y, type, id){
+  const base = {id, x:x*TILE+TILE/2, y:y*TILE+TILE/2, alive:true, dir:[[1,0],[-1,0],[0,1],[0,-1]][Math.floor(Math.random()*4)], moveTimer:0, hit:0, deathAnim:0, type, frozen:0};
+  if(type==='normal') return {...base, hp:1, maxHp:1, speed:1, color:'#ef4444', score:10};
+  if(type==='fast')   return {...base, hp:1, maxHp:1, speed:2, color:'#22c55e', score:15};
+  if(type==='tank')   return {...base, hp:3, maxHp:3, speed:0.5, color:'#a855f7', score:25};
+  if(type==='shooter')return {...base, hp:2, maxHp:2, speed:0.7, color:'#f97316', score:20, shootTimer:0};
+  return base;
+}
+
+function spawnMonsters(maze, level){
+  const cells=[];
+  for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
+    if(maze[y][x]===PATH && Math.abs(x-1)+Math.abs(y-1)>8) cells.push([x,y]);
+  }
+  cells.sort(()=>Math.random()-.5);
+
+  const dm = DIFF_MULT[settings.difficulty];
+  const count = Math.floor((3+level*2)*dm);
+  const monsters=[];
+  const types = ['normal','normal','fast','tank','shooter'];
+
+  for(let i=0;i<Math.min(count,cells.length);i++){
+    const [cx,cy]=cells[i];
+    let t = types[Math.floor(Math.random()*types.length)];
+    if(level<2) t='normal';
+    else if(level<4 && t==='shooter') t='normal';
+    monsters.push(createMonster(cx,cy,t,i));
+  }
+  return monsters;
+}
+
+// ── Boss ─────────────────────────────────────────────────────────────
+function spawnBoss(maze, level){
+  const cx = Math.floor(COLS/2), cy=Math.floor(ROWS/2);
+  let bx=cx, by=cy;
+  for(let r=0;r<10;r++){
+    for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){
+      const x=cx+dx, y=cy+dy;
+      if(x>1&&x<COLS-2&&y>1&&y<ROWS-2&&maze[y][x]===PATH) { bx=x; by=y; r=999; break; }
+    }
+  }
+  for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+    if(by+dy>0&&by+dy<ROWS-1&&bx+dx>0&&bx+dx<COLS-1) maze[by+dy][bx+dx]=PATH;
+  }
+  const hp = 10 + level * 5;
+  return {
+    x:bx*TILE+TILE/2, y:by*TILE+TILE/2,
+    hp, maxHp:hp, alive:true, frozen:0,
+    phase:0, timer:0, attackTimer:0,
+    moveDir:[1,0], moveTimer:0,
+    deathAnim:0, hit:0,
+    color: level<=3?'#dc2626':level<=6?'#ea580c':level<=9?'#16a34a':'#7c3aed'
+  };
+}
+
+// ── Collision ────────────────────────────────────────────────────────
+function canMove(maze, px, py, radius){
+  const r = radius||10;
+  return [[px-r,py-r],[px+r,py-r],[px-r,py+r],[px+r,py+r]].every(([cx,cy])=>{
+    const gx=Math.floor(cx/TILE), gy=Math.floor(cy/TILE);
+    if(gx<0||gx>=COLS||gy<0||gy>=ROWS) return false;
+    const t=maze[gy][gx];
+    return t!==WALL && t!==DOOR_R && t!==DOOR_B && t!==DOOR_G;
+  });
+}
+
+// ── Explored map for minimap ─────────────────────────────────────────
+function updateExplored(explored, px, py, radius){
+  const cx=Math.floor(px/TILE), cy=Math.floor(py/TILE);
+  const r=Math.ceil(radius/TILE)+1;
+  for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){
+    const x=cx+dx, y=cy+dy;
+    if(x>=0&&x<COLS&&y>=0&&y<ROWS) explored[y][x]=true;
+  }
+}
+
+// ── Init Level ───────────────────────────────────────────────────────
+function initLevel(lvl, score, lives){
+  const maze = generateMaze(COLS, ROWS);
+  const isBossLevel = (lvl%3===0 && lvl>0);
+  const {doors, doorKeys} = placeDoors(maze, lvl);
+  const items = spawnItems(maze, lvl);
+  const monsters = isBossLevel ? spawnMonsters(maze, Math.max(1,lvl-2)) : spawnMonsters(maze, lvl);
+  const boss = isBossLevel ? spawnBoss(maze, lvl) : null;
+  const explored = Array.from({length:ROWS},()=>Array(COLS).fill(false));
+  const traps = placeTraps(maze, lvl);
+  const buttons = placeButtons(maze, lvl);
+  const npcs = placeNPCs(maze, lvl);
+
+  state = {
+    maze, monsters, boss, doors, doorKeys, items, traps, buttons, npcs,
+    bullets:[], enemyBullets:[], particles:[],
+    player:{x:TILE+TILE/2, y:TILE+TILE/2, dir:[1,0], invuln:0, shieldTimer:0, speedTimer:0, smoothX:TILE+TILE/2, smoothY:TILE+TILE/2, deathAnim:0, slideDir:null, slideTimer:0, buffTimer:0, buffType:null, ultimateCharge:0, ultimateActive:0, damageTaken:false, trapCooldown:0},
+    keysCollected:{[DOOR_R]:false,[DOOR_B]:false,[DOOR_G]:false},
+    explored,
+    score: score||0, lives: lives||3, level: lvl,
+    currentWeapon: persist.currentWeapon,
+    weapons: [...persist.weapons],
+    lastShot:0, gameOver:false, won:false, flash:0,
+    timer: (120 + lvl*30) * 60,
+    startTime: Date.now(),
+    theme: getTheme(lvl),
+    killsThisLevel: 0,
+    mode: gameMode
+  };
+}
+
+// ── Survival Mode ────────────────────────────────────────────────────
+function generateArena(){
+  const maze = Array.from({length:ROWS},()=>Array(COLS).fill(PATH));
+  // Walls around border
+  for(let x=0;x<COLS;x++){maze[0][x]=WALL;maze[ROWS-1][x]=WALL;}
+  for(let y=0;y<ROWS;y++){maze[y][0]=WALL;maze[y][COLS-1]=WALL;}
+  // Some internal walls for cover
+  for(let i=0;i<15;i++){
+    const x = 3+Math.floor(Math.random()*(COLS-6));
+    const y = 3+Math.floor(Math.random()*(ROWS-6));
+    maze[y][x]=WALL;
+    if(Math.random()>.5 && x+1<COLS-1) maze[y][x+1]=WALL;
+    if(Math.random()>.5 && y+1<ROWS-1) maze[y+1][x]=WALL;
+  }
+  return maze;
+}
+
+function initSurvival(){
+  const maze = generateArena();
+  const explored = Array.from({length:ROWS},()=>Array(COLS).fill(true));
+  survivalStats = {wave:0, score:0, monstersKilled:0};
+
+  state = {
+    maze, monsters:[], boss:null, doors:[], doorKeys:[], items:[], traps:[], buttons:[], npcs:[],
+    bullets:[], enemyBullets:[], particles:[],
+    player:{x:Math.floor(COLS/2)*TILE+TILE/2, y:Math.floor(ROWS/2)*TILE+TILE/2, dir:[1,0], invuln:0, shieldTimer:0, speedTimer:0, smoothX:Math.floor(COLS/2)*TILE+TILE/2, smoothY:Math.floor(ROWS/2)*TILE+TILE/2, deathAnim:0, slideDir:null, slideTimer:0, buffTimer:0, buffType:null, ultimateCharge:0, ultimateActive:0, damageTaken:false, trapCooldown:0},
+    keysCollected:{}, explored,
+    score:0, lives:5, level:1,
+    currentWeapon:0, weapons:[0,1,2],
+    lastShot:0, gameOver:false, won:false, flash:0,
+    timer:Infinity, startTime:Date.now(),
+    theme:getTheme(1),
+    killsThisLevel:0,
+    mode:'survival',
+    survivalWave:0, survivalWaveTimer:0, survivalSpawnTimer:0
+  };
+  spawnSurvivalWave();
+}
+
+function spawnSurvivalWave(){
+  if(!state || state.mode !== 'survival') return;
+  state.survivalWave++;
+  survivalStats.wave = state.survivalWave;
+  const wave = state.survivalWave;
+  const dm = DIFF_MULT[settings.difficulty];
+  const count = Math.floor((3 + wave * 2) * dm);
+  const types = ['normal','fast','tank','shooter'];
+  const cells = [];
+  for(let y=1;y<ROWS-1;y++) for(let x=1;x<COLS-1;x++){
+    if(state.maze[y][x]===PATH){
+      const dist = Math.abs(x*TILE+TILE/2 - state.player.x) + Math.abs(y*TILE+TILE/2 - state.player.y);
+      if(dist > TILE*5) cells.push([x,y]);
+    }
+  }
+  cells.sort(()=>Math.random()-.5);
+  const baseId = state.monsters.length;
+  for(let i=0;i<Math.min(count,cells.length);i++){
+    const [cx,cy]=cells[i];
+    let t = types[Math.floor(Math.random()*types.length)];
+    if(wave < 3) t = Math.random()>.3?'normal':'fast';
+    const m = createMonster(cx,cy,t,baseId+i);
+    m.hp = Math.ceil(m.hp * (1 + wave*0.1));
+    m.maxHp = m.hp;
+    state.monsters.push(m);
+  }
+  // Drop items
+  if(wave % 2 === 0 && cells.length > count){
+    const ic = cells[count];
+    state.items.push({x:ic[0]*TILE+TILE/2,y:ic[1]*TILE+TILE/2,type:'health',emoji:'❤️',color:'#ef4444',active:true,bob:0});
+  }
+  state.survivalWaveTimer = 180; // display wave number for 3 sec
+}
+
+// ── Two Player Mode ──────────────────────────────────────────────────
+function initTwoPlayer(){
+  const maze = generateMaze(COLS, ROWS);
+  const explored = Array.from({length:ROWS},()=>Array(COLS).fill(true)); // full visibility for 2p
+  const monsters = spawnMonsters(maze, 3);
+
+  state = {
+    maze, monsters, boss:null, doors:[], doorKeys:[], items:spawnItems(maze,3), traps:placeTraps(maze,3), buttons:[], npcs:[],
+    bullets:[], enemyBullets:[], particles:[],
+    player:{x:TILE+TILE/2, y:TILE+TILE/2, dir:[1,0], invuln:0, shieldTimer:0, speedTimer:0, smoothX:TILE+TILE/2, smoothY:TILE+TILE/2, deathAnim:0, slideDir:null, slideTimer:0, buffTimer:0, buffType:null, ultimateCharge:0, ultimateActive:0, damageTaken:false, trapCooldown:0},
+    keysCollected:{}, explored,
+    score:0, lives:5, level:3,
+    currentWeapon:0, weapons:[0,1,2],
+    lastShot:0, gameOver:false, won:false, flash:0,
+    timer:(300)*60, startTime:Date.now(),
+    theme:getTheme(3),
+    killsThisLevel:0,
+    mode:'twoplayer'
+  };
+
+  player2State = {
+    x:(COLS-2)*TILE+TILE/2, y:TILE+TILE/2, dir:[-1,0], invuln:0, shieldTimer:0, speedTimer:0, lives:5, currentWeapon:0, lastShot:0, deathAnim:0, alive:true, slideDir:null, slideTimer:0, trapCooldown:0
+  };
+  // place exit
+  state.maze[ROWS-2][COLS-2]=EXIT;
+}
+
+// ── Shop ─────────────────────────────────────────────────────────────
+function openShop(){
+  const el = document.getElementById('shop-items');
+  const scoreEl = document.getElementById('shop-score');
+
+  function render(){
+    scoreEl.textContent = `النقاط المتاحة: ${persist.score}`;
+    const shopItems = [
+      {name:'حياة إضافية ❤️', cost:100, action:()=>{persist.lives++;}, always:true},
+      {name:'بندقية 🔫', cost:200, action:()=>{if(!persist.weapons.includes(1))persist.weapons.push(1);}, check:()=>!persist.weapons.includes(1)},
+      {name:'رشاش 🔫', cost:300, action:()=>{if(!persist.weapons.includes(2))persist.weapons.push(2);}, check:()=>!persist.weapons.includes(2)},
+      {name:'سرعة دائمة ⚡', cost:150, action:()=>{persist.speedBonus=Math.min(persist.speedBonus+0.5,2);}, always:true},
+    ];
+
+    el.innerHTML = shopItems.filter(s=>s.always||s.check()).map((item,i)=>{
+      const canBuy = persist.score>=item.cost;
+      return `<div class="shop-item"><span>${item.name}</span><span class="cost">${item.cost} ⭐</span><button class="btn btn-small btn-success shop-buy" data-idx="${i}" ${canBuy?'':'disabled'}>شراء</button></div>`;
+    }).join('');
+
+    el.querySelectorAll('.shop-buy').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const idx=parseInt(btn.dataset.idx);
+        const available = shopItems.filter(s=>s.always||s.check());
+        const item = available[idx];
+        if(item && persist.score>=item.cost){
+          persist.score-=item.cost;
+          item.action();
+          playSound('pickup');
+          render();
+        }
+      });
+    });
+  }
+  render();
+  showScreen('shop-screen');
+}
+
+// ── Show Story ───────────────────────────────────────────────────────
+function showStory(lvl, callback){
+  const idx = Math.min(lvl-1, STORIES.length-1);
+  document.getElementById('story-title').textContent = `المستوى ${lvl} - ${getTheme(lvl).name}`;
+  document.getElementById('story-text').textContent = STORIES[idx];
+  showScreen('story-screen');
+  document.getElementById('story-continue').onclick = callback;
+}
+
+// ── Show Overlay ─────────────────────────────────────────────────────
+function showOverlay(msg, sub, won){
+  document.getElementById('overlay-msg').textContent=msg;
+  document.getElementById('overlay-sub').textContent=sub||'';
+  document.getElementById('overlay-score').textContent=`النقاط: ${state?state.score:0}`;
+  document.getElementById('next-btn').style.display=won?'block':'none';
+  document.getElementById('retry-btn').textContent=(state&&state.gameOver)?'حاول مرة أخرى':'من البداية';
+  document.getElementById('overlay').classList.add('show');
+}
+
+// ── Start Game ───────────────────────────────────────────────────────
+function startGame(){
+  gameMode = 'campaign';
+  player2State = null;
+  persist = {lives:3, weapons:[0], currentWeapon:0, speedBonus:0, score:0, level:1};
+  showStory(1, ()=>{
+    showScreen('game-screen');
+    initLevel(1, 0, 3);
+    startFadeIn();
+    if(raf) cancelAnimationFrame(raf);
+    frame=0;
+    loop();
+  });
+}
+
+function startSurvival(){
+  gameMode = 'survival';
+  player2State = null;
+  showScreen('game-screen');
+  initSurvival();
+  startFadeIn();
+  if(raf) cancelAnimationFrame(raf);
+  frame=0;
+  loop();
+}
+
+function startTwoPlayer(){
+  gameMode = 'twoplayer';
+  showScreen('game-screen');
+  initTwoPlayer();
+  startFadeIn();
+  if(raf) cancelAnimationFrame(raf);
+  frame=0;
+  loop();
+}
+
+function nextLevel(){
+  document.getElementById('overlay').classList.remove('show');
+  persist.score = state.score;
+  persist.lives = state.lives;
+  persist.level++;
+
+  openShop();
+  document.getElementById('shop-continue').onclick = ()=>{
+    showStory(persist.level, ()=>{
+      showScreen('game-screen');
+      startFadeOut(()=>{
+        initLevel(persist.level, persist.score, persist.lives);
+      });
+    });
+  };
+}
+
+// ── Drawing Helpers ──────────────────────────────────────────────────
+function drawMonsterShape(c, m, wobble){
+  c.save();
+  c.translate(m.x, m.y+wobble);
+
+  if(m.frozen > 0){
+    c.globalAlpha = 0.7;
+    c.fillStyle = '#88ccff';
+    c.beginPath();c.arc(0,0,14,0,Math.PI*2);c.fill();
+    c.globalAlpha = 1;
+  }
+
+  if(m.hit>0){c.globalAlpha=0.5+Math.sin(frame*0.5)*0.3;}
+
+  const sz = m.type==='tank'?14:10;
+  c.fillStyle=m.color;
+  c.beginPath();
+  c.moveTo(-sz,sz);c.lineTo(-sz,-sz*0.4);
+  c.quadraticCurveTo(-sz,-sz*1.2,0,-sz*1.2);
+  c.quadraticCurveTo(sz,-sz*1.2,sz,-sz*0.4);
+  c.lineTo(sz,sz);
+  for(let i=0;i<5;i++){const lx=-sz+i*(sz*2/5);c.lineTo(lx+sz/5,sz-4);c.lineTo(lx+sz*2/5,sz);}
+  c.fill();
+
+  // Eyes
+  c.fillStyle='#fff';
+  c.beginPath();c.arc(-sz*0.35,-sz*0.3,sz*0.25,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(sz*0.35,-sz*0.3,sz*0.25,0,Math.PI*2);c.fill();
+  c.fillStyle='#1e1e2e';
+  c.beginPath();c.arc(-sz*0.25,-sz*0.2,sz*0.13,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(sz*0.45,-sz*0.2,sz*0.13,0,Math.PI*2);c.fill();
+
+  if(m.type==='fast'){
+    c.strokeStyle='#fff';c.lineWidth=1;
+    c.beginPath();c.moveTo(-sz-3,-2);c.lineTo(-sz-7,-2);c.stroke();
+    c.beginPath();c.moveTo(-sz-2,3);c.lineTo(-sz-6,3);c.stroke();
+  }
+  if(m.type==='tank'){
+    c.strokeStyle='rgba(255,255,255,0.3)';c.lineWidth=2;
+    c.beginPath();c.moveTo(-sz+2,0);c.lineTo(sz-2,0);c.stroke();
+  }
+  if(m.type==='shooter'){
+    c.fillStyle='#333';
+    c.fillRect(sz-2,-2,6,4);
+  }
+
+  if(m.type==='tank'||m.type==='shooter'){
+    const bw=sz*2, bh=3;
+    c.fillStyle='rgba(0,0,0,0.5)';c.fillRect(-bw/2,-sz*1.5,bw,bh);
+    c.fillStyle=m.color;c.fillRect(-bw/2,-sz*1.5,bw*(m.hp/m.maxHp),bh);
+  }
+
+  c.restore();
+}
+
+function drawBoss(c, b){
+  if(!b||!b.alive) return;
+  c.save();
+  c.translate(b.x, b.y);
+
+  if(b.frozen > 0){
+    c.globalAlpha = 0.6;
+    c.fillStyle = '#88ccff';
+    c.beginPath();c.arc(0,0,28,0,Math.PI*2);c.fill();
+    c.globalAlpha = 1;
+  }
+
+  const pulse = Math.sin(frame*0.05)*3;
+  const sz = 22+pulse;
+
+  if(b.hit>0) c.globalAlpha=0.5+Math.sin(frame*0.5)*0.3;
+
+  c.fillStyle=b.color;
+  c.beginPath();
+  c.moveTo(-sz,sz);c.lineTo(-sz,-sz*0.3);
+  c.quadraticCurveTo(-sz,-sz*1.3,0,-sz*1.3);
+  c.quadraticCurveTo(sz,-sz*1.3,sz,-sz*0.3);
+  c.lineTo(sz,sz);
+  for(let i=0;i<7;i++){const lx=-sz+i*(sz*2/7);c.lineTo(lx+sz/7,sz-5);c.lineTo(lx+sz*2/7,sz);}
+  c.fill();
+
+  c.fillStyle=b.color;
+  c.beginPath();c.moveTo(-sz*0.6,-sz*1.3);c.lineTo(-sz*0.4,-sz*1.8);c.lineTo(-sz*0.2,-sz*1.3);c.fill();
+  c.beginPath();c.moveTo(sz*0.2,-sz*1.3);c.lineTo(sz*0.4,-sz*1.8);c.lineTo(sz*0.6,-sz*1.3);c.fill();
+
+  c.fillStyle='#fff';
+  c.beginPath();c.arc(-8,-6,5,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(8,-6,5,0,Math.PI*2);c.fill();
+  c.fillStyle='#ff0000';
+  c.beginPath();c.arc(-7,-5,2.5,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(9,-5,2.5,0,Math.PI*2);c.fill();
+
+  const bw=50, bh=6;
+  c.fillStyle='rgba(0,0,0,0.7)';c.fillRect(-bw/2,-sz*2,bw,bh);
+  c.fillStyle='#ef4444';c.fillRect(-bw/2,-sz*2,bw*(b.hp/b.maxHp),bh);
+  c.strokeStyle='#fff';c.lineWidth=0.5;c.strokeRect(-bw/2,-sz*2,bw,bh);
+
+  c.restore();
+}
+
+function drawPlayer(c, px, py, pdir, weaponIdx, shieldTimer, speedTimer, isP2){
+  c.save();
+  c.translate(px, py);
+
+  if(shieldTimer>0){
+    c.strokeStyle=`rgba(96,165,250,${0.4+Math.sin(frame*0.1)*0.2})`;
+    c.lineWidth=2;
+    c.beginPath();c.arc(0,0,16,0,Math.PI*2);c.stroke();
+  }
+
+  if(speedTimer>0){
+    c.fillStyle='rgba(251,191,36,0.15)';
+    c.beginPath();c.arc(0,0,14,0,Math.PI*2);c.fill();
+  }
+
+  c.fillStyle = isP2 ? '#22c55e' : '#3b82f6';
+  c.beginPath();c.arc(0,0,11,0,Math.PI*2);c.fill();
+  c.fillStyle = isP2 ? '#4ade80' : '#60a5fa';
+  c.beginPath();c.arc(-3,-3,4,0,Math.PI*2);c.fill();
+
+  const wep = WEAPONS[weaponIdx||0];
+  c.strokeStyle=wep.color;c.lineWidth=2;
+  c.beginPath();c.moveTo(0,0);c.lineTo(pdir[0]*14,pdir[1]*14);c.stroke();
+
+  c.restore();
+}
+
+// ── Draw Wall with 3D shadows ────────────────────────────────────────
+function drawWall3D(c, tx, ty, theme, maze, x, y){
+  c.fillStyle = theme.wall;
+  c.fillRect(tx, ty, TILE, TILE);
+
+  // Top border (lighter)
+  c.strokeStyle = theme.wallBorder;
+  c.lineWidth = 1;
+  c.beginPath();c.moveTo(tx, ty);c.lineTo(tx+TILE, ty);c.stroke();
+  c.beginPath();c.moveTo(tx, ty);c.lineTo(tx, ty+TILE);c.stroke();
+
+  // Bottom/right shadow (darker)
+  c.fillStyle = theme.wallShadow;
+  // Right shadow
+  if(x+1<COLS && maze[y][x+1]!==WALL){
+    c.fillRect(tx+TILE-3, ty, 3, TILE);
+  }
+  // Bottom shadow
+  if(y+1<ROWS && maze[y+1][x]!==WALL){
+    c.fillRect(tx, ty+TILE-3, TILE, 3);
+  }
+
+  // Inner highlight
+  c.strokeStyle = theme.wallBorder;
+  c.lineWidth = 0.5;
+  c.strokeRect(tx+2, ty+2, TILE-4, TILE-4);
+}
+
+// ── Draw Trap ────────────────────────────────────────────────────────
+function drawTrap(c, trap){
+  const tx = trap.x * TILE, ty = trap.y * TILE;
+  if(trap.type === TRAP_SPIKE){
+    c.fillStyle = 'rgba(120,120,120,0.6)';
+    for(let i=0;i<3;i++){
+      const sx = tx + 4 + i*10;
+      c.beginPath();c.moveTo(sx, ty+TILE-4);c.lineTo(sx+5, ty+8);c.lineTo(sx+10, ty+TILE-4);c.fill();
+    }
+  } else if(trap.type === TRAP_LAVA){
+    const pulse = Math.sin(frame*0.08 + trap.x)*0.2 + 0.6;
+    c.fillStyle = `rgba(239,68,68,${pulse})`;
+    c.fillRect(tx+2, ty+2, TILE-4, TILE-4);
+    c.fillStyle = `rgba(249,115,22,${pulse*0.7})`;
+    c.fillRect(tx+6, ty+6, TILE-12, TILE-12);
+    // Bubbles
+    const bx = tx + 8 + Math.sin(frame*0.1+trap.x)*8;
+    const by = ty + 10 + Math.cos(frame*0.13+trap.y)*6;
+    c.fillStyle = 'rgba(251,191,36,0.5)';
+    c.beginPath();c.arc(bx,by,2,0,Math.PI*2);c.fill();
+  } else if(trap.type === TRAP_ICE){
+    c.fillStyle = 'rgba(34,211,238,0.3)';
+    c.fillRect(tx+1, ty+1, TILE-2, TILE-2);
+    c.strokeStyle = 'rgba(165,243,252,0.5)';
+    c.lineWidth = 1;
+    c.beginPath();c.moveTo(tx+4,ty+8);c.lineTo(tx+TILE-4,ty+TILE-8);c.stroke();
+    c.beginPath();c.moveTo(tx+TILE-4,ty+4);c.lineTo(tx+8,ty+TILE-4);c.stroke();
+  }
+}
+
+// ── Draw NPC ─────────────────────────────────────────────────────────
+function drawNPC(c, npc){
+  if(npc.rescued) return;
+  npc.bob += 0.03;
+  const bob = Math.sin(npc.bob)*3;
+  c.save();
+  c.translate(npc.x, npc.y + bob);
+  // Blue friendly character
+  c.fillStyle = '#60a5fa';
+  c.beginPath();c.arc(0,-4,8,0,Math.PI*2);c.fill();
+  // Body
+  c.fillStyle = '#3b82f6';
+  c.fillRect(-6, 4, 12, 10);
+  // Face
+  c.fillStyle = '#fff';
+  c.beginPath();c.arc(-3,-5,2,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(3,-5,2,0,Math.PI*2);c.fill();
+  // Help indicator
+  c.fillStyle = '#fbbf24';
+  c.font = 'bold 10px sans-serif';
+  c.textAlign = 'center';
+  c.fillText('!', 0, -16);
+  c.restore();
+}
+
+// ── Draw Button ──────────────────────────────────────────────────────
+function drawButton(c, btn){
+  const tx = btn.bx * TILE, ty = btn.by * TILE;
+  c.fillStyle = btn.pressed ? 'rgba(34,197,94,0.5)' : 'rgba(251,191,36,0.5)';
+  c.beginPath();
+  c.arc(tx+TILE/2, ty+TILE/2, 10, 0, Math.PI*2);
+  c.fill();
+  c.strokeStyle = btn.pressed ? '#22c55e' : '#fbbf24';
+  c.lineWidth = 2;
+  c.stroke();
+  if(!btn.pressed){
+    c.fillStyle = '#fbbf24';
+    c.font = '10px sans-serif';
+    c.textAlign = 'center';
+    c.fillText('⚙', tx+TILE/2, ty+TILE/2+4);
+  }
+}
+
+// ── Apply damage to player helper ────────────────────────────────────
+function damagePlayer(s, p, amount){
+  if(p.shieldTimer > 0 || p.invuln > 0) return false;
+  s.lives -= (amount||1);
+  s.flash = 15;
+  p.invuln = 90;
+  p.damageTaken = true;
+  triggerScreenShake(8);
+  playSound('damage');
+  if(s.lives <= 0){
+    s.gameOver = true;
+    playSound('lose');
+    saveScore(s.score);
+    if(s.mode === 'survival'){
+      const stats = getAchieveStats();
+      if(survivalStats.wave > stats.maxSurvivalWave) stats.maxSurvivalWave = survivalStats.wave;
+      saveAchieveStats(stats);
+      checkAchievements();
+      showOverlay(`انتهت اللعبة! الموجة: ${survivalStats.wave}`, `القتلى: ${survivalStats.monstersKilled}`, false);
+    } else {
+      showOverlay('انتهت اللعبة!','',false);
+    }
+    return true;
+  }
+  return false;
+}
+
+// ── Blood/Spark Particle Trails ──────────────────────────────────────
+function spawnHitParticles(x, y, color, count, hasTrail){
+  for(let i=0;i<count;i++){
+    const angle = Math.random()*Math.PI*2;
+    const speed = 2 + Math.random()*4;
+    state.particles.push({
+      x, y,
+      dx: Math.cos(angle)*speed,
+      dy: Math.sin(angle)*speed,
+      life: 20 + Math.floor(Math.random()*15),
+      color,
+      trail: hasTrail ? true : false,
+      size: 1.5 + Math.random()*2.5
+    });
+  }
+}
+
+// ── Ultimate Ability ─────────────────────────────────────────────────
+function activateUltimate(s, p){
+  if(p.ultimateCharge < 100) return;
+  p.ultimateCharge = 0;
+  p.ultimateActive = 180; // 3 seconds at 60fps
+  playSound('ultimate');
+  triggerScreenShake(12);
+
+  // Freeze all monsters
+  for(const m of s.monsters){
+    if(m.alive) m.frozen = 180;
+  }
+  if(s.boss && s.boss.alive) s.boss.frozen = 180;
+
+  // Damage nearby monsters
+  for(const m of s.monsters){
+    if(!m.alive) continue;
+    const dist = Math.sqrt((m.x-p.x)**2 + (m.y-p.y)**2);
+    if(dist < TILE*5){
+      m.hp -= 2;
+      m.hit = 8;
+      spawnHitParticles(m.x, m.y, '#88ccff', 10, true);
+      if(m.hp <= 0){
+        m.alive = false; m.deathAnim = 20;
+        s.score += m.score;
+        s.killsThisLevel++;
+        playSound('monster_die');
+      }
+    }
+  }
+  if(s.boss && s.boss.alive){
+    const dist = Math.sqrt((s.boss.x-p.x)**2 + (s.boss.y-p.y)**2);
+    if(dist < TILE*5){
+      s.boss.hp -= 3;
+      s.boss.hit = 8;
+      spawnHitParticles(s.boss.x, s.boss.y, '#88ccff', 15, true);
+    }
+  }
+
+  // Visual particles
+  for(let i=0;i<30;i++){
+    const angle = Math.random()*Math.PI*2;
+    const dist = Math.random()*TILE*5;
+    s.particles.push({
+      x: p.x + Math.cos(angle)*dist,
+      y: p.y + Math.sin(angle)*dist,
+      dx: Math.cos(angle)*2,
+      dy: Math.sin(angle)*2,
+      life: 40, color:'#60a5fa', size:3, trail:true
+    });
+  }
+}
+
+// ── Gamepad Support ──────────────────────────────────────────────────
+let gamepadState = {axes:[0,0,0,0], buttons:{}};
+function pollGamepad(){
+  const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+  const gp = gamepads[0];
+  if(!gp) return;
+  gamepadState.axes = [...gp.axes];
+  for(let i=0;i<gp.buttons.length;i++){
+    gamepadState.buttons[i] = gp.buttons[i].pressed;
+  }
+}
+
+// ── Main Game Loop ───────────────────────────────────────────────────
+function loop(){
+  raf = requestAnimationFrame(loop);
+  if(!state) return;
+  frame++;
+  const s = state;
+  const p = s.player;
+  const dm = DIFF_MULT[settings.difficulty];
+
+  updateScreenShake();
+  updateFade();
+  pollGamepad();
+
+  // ── Update ─────────────────────────────────────────────────────────
+  if(!s.gameOver && !s.won){
+    // Player movement
+    let dx=0, dy=0;
+    if(keys['w']||keys['arrowup'])   {dy=-1;p.dir=[0,-1];}
+    if(keys['s']||keys['arrowdown']) {dy=1;p.dir=[0,1];}
+    if(keys['a']||keys['arrowleft']) {dx=-1;p.dir=[-1,0];}
+    if(keys['d']||keys['arrowright']){dx=1;p.dir=[1,0];}
+
+    // Two-player: P1 uses WASD only
+    if(s.mode === 'twoplayer'){
+      dx=0;dy=0;
+      if(keys['w']){dy=-1;p.dir=[0,-1];}
+      if(keys['s']){dy=1;p.dir=[0,1];}
+      if(keys['a']){dx=-1;p.dir=[-1,0];}
+      if(keys['d']){dx=1;p.dir=[1,0];}
+    }
+
+    // Gamepad input
+    if(Math.abs(gamepadState.axes[0])>0.3 || Math.abs(gamepadState.axes[1])>0.3){
+      dx = gamepadState.axes[0]; dy = gamepadState.axes[1];
+      if(Math.abs(dx)>Math.abs(dy)) p.dir=[Math.sign(dx),0];
+      else p.dir=[0,Math.sign(dy)];
+    }
+    // Gamepad dpad
+    if(gamepadState.buttons[12]) {dy=-1;p.dir=[0,-1];}
+    if(gamepadState.buttons[13]) {dy=1;p.dir=[0,1];}
+    if(gamepadState.buttons[14]) {dx=-1;p.dir=[-1,0];}
+    if(gamepadState.buttons[15]) {dx=1;p.dir=[1,0];}
+
+    // Ice slide effect
+    if(p.slideTimer > 0){
+      p.slideTimer--;
+      if(p.slideDir){
+        dx = p.slideDir[0]; dy = p.slideDir[1];
+      }
+    }
+
+    // Lava slow
+    let speedMult = 1;
+    const pgx = Math.floor(p.x/TILE), pgy = Math.floor(p.y/TILE);
+    for(const trap of s.traps){
+      if(trap.type === TRAP_LAVA && trap.x === pgx && trap.y === pgy){
+        speedMult = 0.5;
+      }
+    }
+
+    const baseSpeed = (3 + persist.speedBonus + (p.speedTimer>0?1.5:0) + (p.buffType==='speed'&&p.buffTimer>0?1:0)) * speedMult;
+    if(dx||dy){
+      const len=Math.sqrt(dx*dx+dy*dy);
+      dx=dx/len*baseSpeed; dy=dy/len*baseSpeed;
+      footstepTimer++;
+      if(footstepTimer>12){footstepTimer=0;playSound('footstep');}
+    }
+    if(canMove(s.maze,p.x+dx,p.y+dy)){p.x+=dx;p.y+=dy;}
+    else if(canMove(s.maze,p.x+dx,p.y)){p.x+=dx;}
+    else if(canMove(s.maze,p.x,p.y+dy)){p.y+=dy;}
+
+    p.smoothX+=(p.x-p.smoothX)*0.3;
+    p.smoothY+=(p.y-p.smoothY)*0.3;
+
+    // Weapon switch (Q or gamepad Y)
+    if((keys['q']&&!keys._qHandled) || (gamepadState.buttons[3]&&!gamepadState._yHandled)){
+      keys._qHandled=true; gamepadState._yHandled=true;
+      const weps = s.weapons;
+      const ci = weps.indexOf(s.currentWeapon);
+      s.currentWeapon = weps[(ci+1)%weps.length];
+    }
+    if(!keys['q']) keys._qHandled=false;
+    if(!gamepadState.buttons[3]) gamepadState._yHandled=false;
+
+    // Ultimate (E or gamepad LB)
+    if((keys['e']&&!keys._eHandled) || (gamepadState.buttons[4]&&!gamepadState._lbHandled)){
+      keys._eHandled=true; gamepadState._lbHandled=true;
+      activateUltimate(s, p);
+    }
+    if(!keys['e']) keys._eHandled=false;
+    if(!gamepadState.buttons[4]) gamepadState._lbHandled=false;
+
+    // Shoot (Space or gamepad A)
+    if(keys[' '] || gamepadState.buttons[0]){
+      const wep = WEAPONS[s.currentWeapon];
+      const now = Date.now();
+      if(now-s.lastShot>wep.fireRate){
+        s.lastShot=now;
+        playSound(wep.id==='shotgun'?'shotgun':wep.id==='rapid'?'rapid':'shoot');
+        for(let i=0;i<wep.count;i++){
+          const angle = Math.atan2(p.dir[1],p.dir[0]) + (wep.count>1?(i-Math.floor(wep.count/2))*wep.spread : (Math.random()-.5)*wep.spread*2);
+          s.bullets.push({x:p.x,y:p.y,dx:Math.cos(angle)*wep.speed,dy:Math.sin(angle)*wep.speed,life:50,damage:wep.damage*(p.buffType==='damage'&&p.buffTimer>0?2:1),color:wep.color,owner:1});
+        }
+      }
+    }
+
+    // Timers
+    if(p.invuln>0) p.invuln--;
+    if(p.shieldTimer>0) p.shieldTimer--;
+    if(p.speedTimer>0) p.speedTimer--;
+    if(p.buffTimer>0) p.buffTimer--;
+    if(p.ultimateActive>0) p.ultimateActive--;
+    if(p.trapCooldown>0) p.trapCooldown--;
+
+    // ── Floor Traps ──────────────────────────────────────────────────
+    if(p.trapCooldown <= 0){
+      for(const trap of s.traps){
+        if(Math.floor(p.x/TILE)===trap.x && Math.floor(p.y/TILE)===trap.y){
+          if(trap.type === TRAP_SPIKE){
+            p.trapCooldown = 60;
+            playSound('trap');
+            damagePlayer(s, p, 1);
+          } else if(trap.type === TRAP_LAVA){
+            p.trapCooldown = 30;
+            playSound('trap');
+            damagePlayer(s, p, 1);
+          } else if(trap.type === TRAP_ICE){
+            if(p.slideTimer <= 0){
+              p.slideDir = [...p.dir];
+              p.slideTimer = 20;
+            }
+          }
+        }
+      }
+    }
+
+    // ── Pressure Buttons ─────────────────────────────────────────────
+    for(const btn of s.buttons){
+      if(!btn.pressed && Math.floor(p.x/TILE)===btn.bx && Math.floor(p.y/TILE)===btn.by){
+        btn.pressed = true;
+        playSound('button');
+        // Open secret passage
+        if(s.maze[btn.wy]&&s.maze[btn.wy][btn.wx]===WALL){
+          s.maze[btn.wy][btn.wx] = PATH;
+          for(let i=0;i<12;i++) s.particles.push({x:btn.wx*TILE+TILE/2,y:btn.wy*TILE+TILE/2,dx:(Math.random()-.5)*5,dy:(Math.random()-.5)*5,life:25,color:'#fbbf24',size:2});
+        }
+      }
+    }
+
+    // ── Rescue NPCs ──────────────────────────────────────────────────
+    for(const npc of s.npcs){
+      if(!npc.rescued && Math.abs(p.x-npc.x)<16 && Math.abs(p.y-npc.y)<16){
+        npc.rescued = true;
+        playSound('rescue');
+        s.score += 75;
+        // Random buff
+        const buffs = ['speed','damage','shield'];
+        const buff = buffs[Math.floor(Math.random()*buffs.length)];
+        if(buff === 'shield'){p.shieldTimer = Math.max(p.shieldTimer, 300);}
+        else { p.buffType = buff; p.buffTimer = 300; }
+        for(let i=0;i<15;i++) s.particles.push({x:npc.x,y:npc.y,dx:(Math.random()-.5)*4,dy:(Math.random()-.5)*4,life:25,color:'#60a5fa',size:2});
+
+        const stats = getAchieveStats();
+        stats.totalRescued = (stats.totalRescued||0) + 1;
+        saveAchieveStats(stats);
+        checkAchievements();
+      }
+    }
+
+    // Level timer (not for survival)
+    if(s.mode !== 'survival'){
+      s.timer--;
+      if(s.timer<=0){
+        s.gameOver=true;
+        playSound('lose');
+        saveScore(s.score);
+        showOverlay('انتهى الوقت!','',false);
+      }
+    }
+
+    // Exit check
+    if(s.mode !== 'survival'){
+      const gx=Math.floor(p.x/TILE), gy=Math.floor(p.y/TILE);
+      if(s.maze[gy]&&s.maze[gy][gx]===EXIT){
+        if(!s.boss || !s.boss.alive){
+          s.won=true;
+          const timeBonus = Math.floor(Math.max(0,s.timer)/60)*2;
+          s.score += 100*s.level + timeBonus;
+          persist.score = s.score;
+          playSound('win');
+          saveScore(s.score);
+          markLevelCompleted(s.level);
+
+          // Achievement checks
+          const elapsed = (Date.now()-s.startTime)/1000;
+          const stats = getAchieveStats();
+          stats.totalScore = Math.max(stats.totalScore||0, s.score);
+          if(!p.damageTaken) stats.levelNoDamage = true;
+          if(elapsed < 30) stats.levelUnder30s = true;
+          saveAchieveStats(stats);
+          checkAchievements();
+
+          showOverlay(`المستوى ${s.level} مكتمل!`,`مكافأة الوقت: ${timeBonus}`,true);
+        }
+      }
+    }
+
+    // Survival mode wave logic
+    if(s.mode === 'survival'){
+      const aliveMonsters = s.monsters.filter(m=>m.alive).length;
+      if(aliveMonsters === 0){
+        spawnSurvivalWave();
+        // Check achievement
+        const stats = getAchieveStats();
+        if(s.survivalWave > (stats.maxSurvivalWave||0)){
+          stats.maxSurvivalWave = s.survivalWave;
+          saveAchieveStats(stats);
+          checkAchievements();
+        }
+      }
+      if(s.survivalWaveTimer > 0) s.survivalWaveTimer--;
+    }
+
+    // Key collection
+    for(const k of s.doorKeys){
+      if(!k.collected && Math.abs(p.x-k.x)<16 && Math.abs(p.y-k.y)<16){
+        k.collected=true;
+        s.keysCollected[k.type]=true;
+        playSound('key');
+        s.score+=25;
+        for(let i=0;i<10;i++) s.particles.push({x:k.x,y:k.y,dx:(Math.random()-.5)*4,dy:(Math.random()-.5)*4,life:20,color:k.color,size:2});
+      }
+    }
+
+    // Door unlock
+    for(const d of s.doors){
+      if(!d.open && s.keysCollected[d.type]){
+        const dist = Math.abs(p.x-(d.x*TILE+TILE/2))+Math.abs(p.y-(d.y*TILE+TILE/2));
+        if(dist<TILE*2){
+          d.open=true;
+          s.maze[d.y][d.x]=PATH;
+          playSound('door');
+          for(let i=0;i<15;i++) s.particles.push({x:d.x*TILE+TILE/2,y:d.y*TILE+TILE/2,dx:(Math.random()-.5)*5,dy:(Math.random()-.5)*5,life:25,color:d.color,size:2});
+        }
+      }
+    }
+
+    // Item collection
+    for(const item of s.items){
+      if(!item.active) continue;
+      if(Math.abs(p.x-item.x)<14 && Math.abs(p.y-item.y)<14){
+        item.active=false;
+        playSound('pickup');
+        if(item.type==='health'){s.lives=Math.min(s.lives+1,10);}
+        else if(item.type==='shield'){p.shieldTimer=300;}
+        else if(item.type==='speed'){p.speedTimer=300;}
+        else if(item.type==='coin'){s.score+=50;}
+        for(let i=0;i<8;i++) s.particles.push({x:item.x,y:item.y,dx:(Math.random()-.5)*3,dy:(Math.random()-.5)*3,life:15,color:item.color,size:2});
+      }
+    }
+
+    updateExplored(s.explored, p.x, p.y, TILE*5);
+
+    // ── Player 2 Update (Two Player Mode) ────────────────────────────
+    if(s.mode === 'twoplayer' && player2State && player2State.alive){
+      const p2 = player2State;
+      let dx2=0, dy2=0;
+      if(keys['arrowup'])   {dy2=-1;p2.dir=[0,-1];}
+      if(keys['arrowdown']) {dy2=1;p2.dir=[0,1];}
+      if(keys['arrowleft']) {dx2=-1;p2.dir=[-1,0];}
+      if(keys['arrowright']){dx2=1;p2.dir=[1,0];}
+
+      const spd2 = 3 + (p2.speedTimer>0?1.5:0);
+      if(dx2||dy2){
+        const len=Math.sqrt(dx2*dx2+dy2*dy2);
+        dx2=dx2/len*spd2; dy2=dy2/len*spd2;
+      }
+      if(canMove(s.maze,p2.x+dx2,p2.y+dy2)){p2.x+=dx2;p2.y+=dy2;}
+      else if(canMove(s.maze,p2.x+dx2,p2.y)){p2.x+=dx2;}
+      else if(canMove(s.maze,p2.x,p2.y+dy2)){p2.y+=dy2;}
+
+      if(p2.invuln>0)p2.invuln--;
+      if(p2.shieldTimer>0)p2.shieldTimer--;
+      if(p2.speedTimer>0)p2.speedTimer--;
+      if(p2.trapCooldown>0)p2.trapCooldown--;
+
+      // P2 shoot (Enter)
+      if(keys['enter']){
+        const wep = WEAPONS[p2.currentWeapon];
+        const now = Date.now();
+        if(now-p2.lastShot>wep.fireRate){
+          p2.lastShot=now;
+          playSound(wep.id==='shotgun'?'shotgun':wep.id==='rapid'?'rapid':'shoot');
+          for(let i=0;i<wep.count;i++){
+            const angle=Math.atan2(p2.dir[1],p2.dir[0])+(wep.count>1?(i-Math.floor(wep.count/2))*wep.spread:(Math.random()-.5)*wep.spread*2);
+            s.bullets.push({x:p2.x,y:p2.y,dx:Math.cos(angle)*wep.speed,dy:Math.sin(angle)*wep.speed,life:50,damage:wep.damage,color:wep.color,owner:2});
+          }
+        }
+      }
+
+      // P2 trap collision
+      if(p2.trapCooldown <= 0){
+        for(const trap of s.traps){
+          if(Math.floor(p2.x/TILE)===trap.x && Math.floor(p2.y/TILE)===trap.y){
+            if(trap.type===TRAP_SPIKE||trap.type===TRAP_LAVA){
+              p2.trapCooldown = trap.type===TRAP_SPIKE?60:30;
+              if(p2.invuln<=0&&p2.shieldTimer<=0){
+                p2.lives--;p2.invuln=90;
+                triggerScreenShake(6);
+                playSound('trap');
+                if(p2.lives<=0){p2.alive=false;}
+              }
+            } else if(trap.type===TRAP_ICE && (!p2.slideDir||p2.slideTimer<=0)){
+              p2.slideDir=[...p2.dir];p2.slideTimer=20;
+            }
+          }
+        }
+      }
+      if(p2.slideTimer>0)p2.slideTimer--;
+
+      // P2 item collection
+      for(const item of s.items){
+        if(!item.active)continue;
+        if(Math.abs(p2.x-item.x)<14&&Math.abs(p2.y-item.y)<14){
+          item.active=false;playSound('pickup');
+          if(item.type==='health')p2.lives=Math.min(p2.lives+1,10);
+          else if(item.type==='shield')p2.shieldTimer=300;
+          else if(item.type==='speed')p2.speedTimer=300;
+          else if(item.type==='coin')s.score+=50;
+        }
+      }
+
+      // Both dead = game over in 2p
+      if(!p2.alive && s.lives<=0){
+        s.gameOver=true;playSound('lose');saveScore(s.score);
+        showOverlay('انتهت اللعبة!','',false);
+      }
+    }
+  }
+
+  // ── Bullets ────────────────────────────────────────────────────────
+  s.bullets = s.bullets.filter(b=>{
+    b.x+=b.dx;b.y+=b.dy;b.life--;
+    const gx=Math.floor(b.x/TILE),gy=Math.floor(b.y/TILE);
+    if(gx<0||gx>=COLS||gy<0||gy>=ROWS) return false;
+    const t=s.maze[gy][gx];
+    if(t===WALL||t===DOOR_R||t===DOOR_B||t===DOOR_G){
+      for(let i=0;i<4;i++) s.particles.push({x:b.x,y:b.y,dx:(Math.random()-.5)*3,dy:(Math.random()-.5)*3,life:12,color:b.color||'#fbbf24',size:2});
+      return false;
+    }
+    return b.life>0;
+  });
+
+  // Enemy bullets
+  s.enemyBullets = s.enemyBullets.filter(b=>{
+    b.x+=b.dx;b.y+=b.dy;b.life--;
+    const gx=Math.floor(b.x/TILE),gy=Math.floor(b.y/TILE);
+    if(gx<0||gx>=COLS||gy<0||gy>=ROWS) return false;
+    if(s.maze[gy][gx]===WALL) return false;
+    // Hit player 1
+    if(!s.gameOver&&!s.won&&Math.abs(b.x-p.x)<12&&Math.abs(b.y-p.y)<12){
+      damagePlayer(s, p, 1);
+      return false;
+    }
+    // Hit player 2
+    if(s.mode==='twoplayer'&&player2State&&player2State.alive){
+      if(Math.abs(b.x-player2State.x)<12&&Math.abs(b.y-player2State.y)<12){
+        if(player2State.invuln<=0&&player2State.shieldTimer<=0){
+          player2State.lives--;player2State.invuln=90;triggerScreenShake(6);playSound('damage');
+          if(player2State.lives<=0)player2State.alive=false;
+        }
+        return false;
+      }
+    }
+    return b.life>0;
+  });
+
+  // ── Monsters ───────────────────────────────────────────────────────
+  if(!s.gameOver&&!s.won){
+    for(const m of s.monsters){
+      if(!m.alive){
+        if(m.deathAnim>0) m.deathAnim--;
+        continue;
+      }
+      if(m.hit>0){m.hit--;continue;}
+      if(m.frozen>0){m.frozen--;continue;}
+
+      m.moveTimer++;
+      const spd = (1+s.level*0.2)*m.speed*dm;
+      const moveInterval = m.type==='fast'?4:8;
+
+      if(m.moveTimer>moveInterval){
+        m.moveTimer=0;
+        const mspd=spd*4;
+        if(Math.random()<0.3){
+          // Target closest player
+          let tx=p.x, ty=p.y;
+          if(s.mode==='twoplayer'&&player2State&&player2State.alive){
+            const d1=Math.abs(p.x-m.x)+Math.abs(p.y-m.y);
+            const d2=Math.abs(player2State.x-m.x)+Math.abs(player2State.y-m.y);
+            if(d2<d1){tx=player2State.x;ty=player2State.y;}
+          }
+          const ddx=tx-m.x, ddy=ty-m.y;
+          if(Math.abs(ddx)>Math.abs(ddy)) m.dir=[Math.sign(ddx),0];
+          else m.dir=[0,Math.sign(ddy)];
+        }
+        const nx=m.x+m.dir[0]*mspd, ny=m.y+m.dir[1]*mspd;
+        if(canMove(s.maze,nx,ny,10)){m.x=nx;m.y=ny;}
+        else{
+          const dirs=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>!(d[0]===m.dir[0]&&d[1]===m.dir[1]));
+          m.dir=dirs[Math.floor(Math.random()*dirs.length)];
+        }
+      }
+
+      if(m.type==='shooter'){
+        m.shootTimer=(m.shootTimer||0)+1;
+        if(m.shootTimer>120){
+          m.shootTimer=0;
+          let tx=p.x,ty=p.y;
+          if(s.mode==='twoplayer'&&player2State&&player2State.alive){
+            const d1=Math.abs(p.x-m.x)+Math.abs(p.y-m.y);
+            const d2=Math.abs(player2State.x-m.x)+Math.abs(player2State.y-m.y);
+            if(d2<d1){tx=player2State.x;ty=player2State.y;}
+          }
+          const ddx=tx-m.x, ddy=ty-m.y;
+          const dist=Math.sqrt(ddx*ddx+ddy*ddy);
+          if(dist<TILE*8 && dist>0){
+            s.enemyBullets.push({x:m.x,y:m.y,dx:ddx/dist*4,dy:ddy/dist*4,life:80});
+          }
+        }
+      }
+
+      // Bullet hit monster
+      for(let bi=s.bullets.length-1;bi>=0;bi--){
+        const b=s.bullets[bi];
+        if(Math.abs(b.x-m.x)<14&&Math.abs(b.y-m.y)<14){
+          m.hp-=b.damage;
+          s.bullets.splice(bi,1);
+          m.hit=6;
+          spawnHitParticles(m.x, m.y, m.color, 8, true);
+          if(m.hp<=0){
+            m.alive=false;m.deathAnim=20;
+            s.score+=m.score;
+            s.killsThisLevel++;
+            p.ultimateCharge = Math.min(100, p.ultimateCharge + 10);
+            playSound('monster_die');
+            spawnHitParticles(m.x, m.y, m.color, 15, true);
+
+            if(s.mode==='survival') survivalStats.monstersKilled++;
+            const stats = getAchieveStats();
+            stats.totalKills = (stats.totalKills||0) + 1;
+            stats.totalScore = Math.max(stats.totalScore||0, s.score);
+            saveAchieveStats(stats);
+            checkAchievements();
+          }
+          break;
+        }
+      }
+
+      // Player collision
+      if(m.alive){
+        if(p.invuln<=0&&p.shieldTimer<=0&&Math.abs(p.x-m.x)<16&&Math.abs(p.y-m.y)<16){
+          damagePlayer(s, p, 1);
+        }
+        if(s.mode==='twoplayer'&&player2State&&player2State.alive&&player2State.invuln<=0&&player2State.shieldTimer<=0){
+          if(Math.abs(player2State.x-m.x)<16&&Math.abs(player2State.y-m.y)<16){
+            player2State.lives--;player2State.invuln=90;triggerScreenShake(6);playSound('damage');
+            if(player2State.lives<=0)player2State.alive=false;
+          }
+        }
+      }
+    }
+
+    // ── Boss ─────────────────────────────────────────────────────────
+    if(s.boss&&s.boss.alive){
+      const b=s.boss;
+      if(b.hit>0) b.hit--;
+      if(b.frozen>0){b.frozen--;} else {
+        b.timer++;
+        b.moveTimer++;
+
+        if(b.moveTimer>10){
+          b.moveTimer=0;
+          let tx=p.x,ty=p.y;
+          if(s.mode==='twoplayer'&&player2State&&player2State.alive){
+            const d1=Math.abs(p.x-b.x)+Math.abs(p.y-b.y);
+            const d2=Math.abs(player2State.x-b.x)+Math.abs(player2State.y-b.y);
+            if(d2<d1){tx=player2State.x;ty=player2State.y;}
+          }
+          const ddx=tx-b.x, ddy=ty-b.y;
+          const dist=Math.sqrt(ddx*ddx+ddy*ddy);
+          if(dist>0){
+            const spd=2*dm;
+            const nx=b.x+ddx/dist*spd*4, ny=b.y+ddy/dist*spd*4;
+            if(canMove(s.maze,nx,ny,18)){b.x=nx;b.y=ny;}
+          }
+        }
+
+        b.attackTimer++;
+        if(b.attackTimer>90){
+          b.attackTimer=0;
+          playSound('boss_attack');
+          for(let i=0;i<8;i++){
+            const angle = (Math.PI*2/8)*i + frame*0.01;
+            s.enemyBullets.push({x:b.x,y:b.y,dx:Math.cos(angle)*3,dy:Math.sin(angle)*3,life:100});
+          }
+          const ddx=p.x-b.x,ddy=p.y-b.y,dist=Math.sqrt(ddx*ddx+ddy*ddy);
+          if(dist>0){
+            s.enemyBullets.push({x:b.x,y:b.y,dx:ddx/dist*5,dy:ddy/dist*5,life:80});
+          }
+        }
+      }
+
+      // Bullet hit boss
+      for(let bi=s.bullets.length-1;bi>=0;bi--){
+        const bu=s.bullets[bi];
+        if(Math.abs(bu.x-b.x)<22&&Math.abs(bu.y-b.y)<22){
+          b.hp-=bu.damage;
+          s.bullets.splice(bi,1);
+          b.hit=4;
+          spawnHitParticles(b.x, b.y, b.color, 10, true);
+          if(b.hp<=0){
+            b.alive=false;b.deathAnim=40;
+            s.score+=200;
+            p.ultimateCharge = Math.min(100, p.ultimateCharge + 30);
+            playSound('boss_die');
+            spawnHitParticles(b.x, b.y, b.color, 30, true);
+            const stats = getAchieveStats();
+            stats.bossesKilled = (stats.bossesKilled||0) + 1;
+            stats.totalScore = Math.max(stats.totalScore||0, s.score);
+            saveAchieveStats(stats);
+            checkAchievements();
+          }
+          break;
+        }
+      }
+
+      // Boss-player collision
+      if(b.alive && b.frozen<=0){
+        if(p.invuln<=0&&p.shieldTimer<=0&&Math.abs(p.x-b.x)<26&&Math.abs(p.y-b.y)<26){
+          damagePlayer(s, p, 1);
+        }
+        if(s.mode==='twoplayer'&&player2State&&player2State.alive&&player2State.invuln<=0&&player2State.shieldTimer<=0){
+          if(Math.abs(player2State.x-b.x)<26&&Math.abs(player2State.y-b.y)<26){
+            player2State.lives--;player2State.invuln=90;triggerScreenShake(6);playSound('damage');
+            if(player2State.lives<=0)player2State.alive=false;
+          }
+        }
+      }
+    }
+  }
+
+  // Particles
+  s.particles=s.particles.filter(pt=>{
+    pt.x+=pt.dx;pt.y+=pt.dy;pt.dx*=0.95;pt.dy*=0.95;pt.life--;
+    // Trail particles spawn smaller children
+    if(pt.trail && pt.life > 5 && frame%3===0){
+      s.particles.push({x:pt.x,y:pt.y,dx:(Math.random()-.5)*0.5,dy:(Math.random()-.5)*0.5,life:8,color:pt.color,size:(pt.size||2)*0.5,trail:false});
+    }
+    return pt.life>0;
+  });
+  if(s.flash>0)s.flash--;
+
+  // ── DRAW ───────────────────────────────────────────────────────────
+  const theme = s.theme;
+  ctx.save();
+  ctx.translate(screenShake.x, screenShake.y);
+
+  ctx.fillStyle=theme.bg;
+  ctx.fillRect(-5,-5,W+10,H+10);
+
+  // Draw maze tiles with 3D shadows
+  for(let y=0;y<ROWS;y++){
+    for(let x=0;x<COLS;x++){
+      const tx=x*TILE, ty=y*TILE, t=s.maze[y][x];
+      if(t===WALL){
+        drawWall3D(ctx, tx, ty, theme, s.maze, x, y);
+      } else if(t===EXIT){
+        const pulse=Math.sin(frame*0.08)*0.3+0.7;
+        ctx.fillStyle=`rgba(52,211,153,${pulse})`;
+        ctx.fillRect(tx,ty,TILE,TILE);
+        ctx.fillStyle='#fff';ctx.font='bold 18px sans-serif';ctx.textAlign='center';
+        ctx.fillText('🚪',tx+TILE/2,ty+TILE/2+6);
+      } else if(t===DOOR_R||t===DOOR_B||t===DOOR_G){
+        const dc = t===DOOR_R?'#ef4444':t===DOOR_B?'#3b82f6':'#22c55e';
+        ctx.fillStyle=dc;ctx.globalAlpha=0.6+Math.sin(frame*0.06)*0.2;
+        ctx.fillRect(tx,ty,TILE,TILE);ctx.globalAlpha=1;
+        ctx.fillStyle='#fff';ctx.font='bold 16px sans-serif';ctx.textAlign='center';
+        ctx.fillText('🔒',tx+TILE/2,ty+TILE/2+5);
+      } else {
+        ctx.fillStyle=theme.floor;
+        ctx.fillRect(tx,ty,TILE,TILE);
+      }
+    }
+  }
+
+  // Floor traps
+  for(const trap of s.traps){
+    drawTrap(ctx, trap);
+  }
+
+  // Buttons
+  for(const btn of s.buttons){
+    drawButton(ctx, btn);
+    // Draw secret wall indicator if not pressed
+    if(!btn.pressed && s.maze[btn.wy] && s.maze[btn.wy][btn.wx]===WALL){
+      // Subtle glow on the wall
+      ctx.fillStyle = 'rgba(251,191,36,0.1)';
+      ctx.fillRect(btn.wx*TILE, btn.wy*TILE, TILE, TILE);
+    }
+  }
+
+  // Keys
+  for(const k of s.doorKeys){
+    if(k.collected) continue;
+    const bob=Math.sin(frame*0.06+k.x)*3;
+    ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText(k.emoji,k.x,k.y+bob+4);
+    ctx.shadowColor=k.color;ctx.shadowBlur=8;
+    ctx.beginPath();ctx.arc(k.x,k.y+bob,6,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fill();
+    ctx.shadowBlur=0;
+  }
+
+  // Items
+  for(const item of s.items){
+    if(!item.active) continue;
+    item.bob+=0.04;
+    const bob=Math.sin(item.bob)*3;
+    ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText(item.emoji,item.x,item.y+bob+4);
+  }
+
+  // NPCs
+  for(const npc of s.npcs){
+    drawNPC(ctx, npc);
+  }
+
+  // Monsters
+  for(const m of s.monsters){
+    if(!m.alive){
+      if(m.deathAnim>0){
+        ctx.globalAlpha=m.deathAnim/20;
+        ctx.fillStyle=m.color;
+        const sz=10*(m.deathAnim/20);
+        ctx.beginPath();ctx.arc(m.x,m.y,sz+5,0,Math.PI*2);ctx.fill();
+        ctx.globalAlpha=1;
+      }
+      continue;
+    }
+    const wobble=Math.sin(frame*0.15+m.id)*2;
+    drawMonsterShape(ctx, m, wobble);
+    ctx.globalAlpha=1;
+  }
+
+  // Boss
+  if(s.boss){
+    if(s.boss.alive){
+      drawBoss(ctx, s.boss);
+      ctx.globalAlpha=1;
+    } else if(s.boss.deathAnim>0){
+      s.boss.deathAnim--;
+      ctx.globalAlpha=s.boss.deathAnim/40;
+      ctx.fillStyle=s.boss.color;
+      ctx.beginPath();ctx.arc(s.boss.x,s.boss.y,30*(s.boss.deathAnim/40),0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=1;
+    }
+  }
+
+  // Player 1
+  if(!s.gameOver || p.deathAnim>0){
+    if(s.gameOver){
+      p.deathAnim=(p.deathAnim||20);
+      if(p.deathAnim>0) p.deathAnim--;
+    }
+    if(!(p.invuln>0&&Math.floor(frame/4)%2)){
+      ctx.save();
+      if(s.gameOver&&p.deathAnim!==undefined) ctx.globalAlpha=(p.deathAnim||0)/20;
+      drawPlayer(ctx, p.x, p.y, p.dir, s.currentWeapon, p.shieldTimer, p.speedTimer, false);
+      ctx.globalAlpha=1;
+      ctx.restore();
+    }
+
+    // Ultimate aura
+    if(p.ultimateActive > 0){
+      ctx.save();
+      ctx.globalAlpha = 0.15 + Math.sin(frame*0.2)*0.1;
+      ctx.fillStyle = '#60a5fa';
+      ctx.beginPath();ctx.arc(p.x, p.y, 30+Math.sin(frame*0.15)*5, 0, Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Player 2
+  if(s.mode==='twoplayer'&&player2State&&player2State.alive){
+    if(!(player2State.invuln>0&&Math.floor(frame/4)%2)){
+      drawPlayer(ctx, player2State.x, player2State.y, player2State.dir, player2State.currentWeapon, player2State.shieldTimer, player2State.speedTimer, true);
+    }
+  }
+
+  // Player bullets
+  ctx.shadowColor='#fbbf24';ctx.shadowBlur=6;
+  for(const b of s.bullets){
+    ctx.fillStyle=b.color||'#fbbf24';
+    ctx.beginPath();ctx.arc(b.x,b.y,3,0,Math.PI*2);ctx.fill();
+  }
+  ctx.shadowBlur=0;
+
+  // Enemy bullets
+  ctx.shadowColor='#ef4444';ctx.shadowBlur=6;
+  ctx.fillStyle='#ef4444';
+  for(const b of s.enemyBullets){
+    ctx.beginPath();ctx.arc(b.x,b.y,4,0,Math.PI*2);ctx.fill();
+  }
+  ctx.shadowBlur=0;
+
+  // Particles
+  for(const pt of s.particles){
+    ctx.globalAlpha=Math.min(1, pt.life/25);
+    ctx.fillStyle=pt.color;
+    const sz = (pt.size||2) + pt.life*0.08;
+    ctx.beginPath();ctx.arc(pt.x,pt.y,sz,0,Math.PI*2);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  // ── Dynamic Lighting / Fog of War ─────────────────────────────────
+  if(s.mode !== 'survival' && s.mode !== 'twoplayer'){
+    const lightRadius = TILE*5;
+    const fogCanvas = document.createElement('canvas');
+    fogCanvas.width=W;fogCanvas.height=H;
+    const fogCtx = fogCanvas.getContext('2d');
+    fogCtx.fillStyle=theme.fogColor;
+    fogCtx.fillRect(0,0,W,H);
+    fogCtx.globalCompositeOperation='destination-out';
+
+    const grad = fogCtx.createRadialGradient(p.x,p.y,0,p.x,p.y,lightRadius);
+    grad.addColorStop(0,'rgba(0,0,0,1)');
+    grad.addColorStop(0.7,'rgba(0,0,0,0.6)');
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    fogCtx.fillStyle=grad;
+    fogCtx.fillRect(p.x-lightRadius,p.y-lightRadius,lightRadius*2,lightRadius*2);
+
+    for(const item of s.items){
+      if(!item.active) continue;
+      const ig=fogCtx.createRadialGradient(item.x,item.y,0,item.x,item.y,TILE);
+      ig.addColorStop(0,'rgba(0,0,0,0.3)');ig.addColorStop(1,'rgba(0,0,0,0)');
+      fogCtx.fillStyle=ig;fogCtx.fillRect(item.x-TILE,item.y-TILE,TILE*2,TILE*2);
+    }
+
+    const ex=COLS-2, ey=ROWS-2;
+    const eg=fogCtx.createRadialGradient(ex*TILE+TILE/2,ey*TILE+TILE/2,0,ex*TILE+TILE/2,ey*TILE+TILE/2,TILE*2);
+    eg.addColorStop(0,'rgba(0,0,0,0.4)');eg.addColorStop(1,'rgba(0,0,0,0)');
+    fogCtx.fillStyle=eg;fogCtx.fillRect((ex-2)*TILE,(ey-2)*TILE,TILE*4,TILE*4);
+
+    ctx.drawImage(fogCanvas,0,0);
+  }
+
+  // Damage flash
+  if(s.flash>0){
+    ctx.fillStyle=`rgba(239,68,68,${s.flash/15*0.3})`;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // ── HUD ────────────────────────────────────────────────────────────
+  ctx.fillStyle='rgba(0,0,0,0.7)';
+  ctx.fillRect(0,0,W,32);
+  ctx.font="bold 13px 'Segoe UI',Tahoma,sans-serif";
+
+  let hudX = 8;
+  ctx.fillStyle='#e2e8f0';ctx.textAlign='left';
+  ctx.fillText(`❤️ ${s.lives}`,hudX,21); hudX+=55;
+
+  const wepName = WEAPONS[s.currentWeapon].name;
+  ctx.fillStyle=WEAPONS[s.currentWeapon].color;
+  ctx.fillText(`🔫 ${wepName}`,hudX,21); hudX+=80;
+
+  if(p.shieldTimer>0){ctx.fillStyle='#60a5fa';ctx.fillText(`🛡️ ${Math.ceil(p.shieldTimer/60)}`,hudX,21);hudX+=45;}
+  if(p.speedTimer>0){ctx.fillStyle='#fbbf24';ctx.fillText(`⚡ ${Math.ceil(p.speedTimer/60)}`,hudX,21);hudX+=45;}
+  if(p.buffTimer>0){ctx.fillStyle='#a855f7';ctx.fillText(`✨ ${Math.ceil(p.buffTimer/60)}`,hudX,21);hudX+=45;}
+
+  // Ultimate charge bar
+  const ultW=50, ultH=6, ultX=hudX+5, ultY=12;
+  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fillRect(ultX,ultY,ultW,ultH);
+  ctx.fillStyle= p.ultimateCharge>=100?'#60a5fa':'#334155';
+  ctx.fillRect(ultX,ultY,ultW*(p.ultimateCharge/100),ultH);
+  ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=0.5;ctx.strokeRect(ultX,ultY,ultW,ultH);
+  if(p.ultimateCharge>=100){ctx.fillStyle='#60a5fa';ctx.fillText('E',ultX+ultW+4,21);}
+
+  // Center: level/mode
+  ctx.fillStyle='#e2e8f0';ctx.textAlign='center';
+  if(s.mode==='survival'){
+    ctx.fillText(`وضع البقاء - الموجة ${s.survivalWave||1}`,W/2,21);
+  } else if(s.mode==='twoplayer'){
+    ctx.fillText('وضع لاعبان',W/2,21);
+  } else {
+    ctx.fillText(`المستوى ${s.level} - ${theme.name}`,W/2,21);
+  }
+
+  // Timer (not for survival)
+  if(s.mode !== 'survival'){
+    const timerSec = Math.max(0,Math.ceil(s.timer/60));
+    const timerMin = Math.floor(timerSec/60);
+    const timerS = timerSec%60;
+    ctx.fillStyle=timerSec<30?'#ef4444':'#94a3b8';
+    ctx.textAlign='right';
+    ctx.fillText(`⏱️ ${timerMin}:${timerS.toString().padStart(2,'0')}`,W-70,21);
+  }
+
+  // Score
+  ctx.fillStyle='#fbbf24';ctx.textAlign='right';
+  ctx.fillText(`⭐ ${s.score}`,W-8,21);
+
+  // P2 lives
+  if(s.mode==='twoplayer'&&player2State){
+    ctx.fillStyle='#22c55e';ctx.textAlign='left';
+    ctx.fillText(`P2 ❤️ ${player2State.lives}`,8,H-10);
+  }
+
+  // Keys collected
+  let keyX = 8, keyY = H-20;
+  if(s.mode==='twoplayer') keyY -= 20;
+  for(const dk of s.doorKeys){
+    ctx.font='12px sans-serif';ctx.textAlign='left';
+    ctx.globalAlpha=dk.collected?1:0.3;
+    ctx.fillText(dk.emoji,keyX,keyY);
+    keyX+=20;
+  }
+  ctx.globalAlpha=1;
+
+  // Survival wave announcement
+  if(s.mode==='survival' && s.survivalWaveTimer > 0){
+    ctx.fillStyle='rgba(0,0,0,0.5)';
+    ctx.fillRect(W/2-100, H/2-30, 200, 60);
+    ctx.fillStyle='#fbbf24';ctx.font='bold 24px sans-serif';ctx.textAlign='center';
+    ctx.fillText(`الموجة ${s.survivalWave}`,W/2,H/2+8);
+  }
+
+  // ── Minimap ────────────────────────────────────────────────────────
+  const mmScale=3, mmW=COLS*mmScale, mmH=ROWS*mmScale;
+  const mmX=W-mmW-8, mmY=36;
+  ctx.fillStyle='rgba(0,0,0,0.6)';
+  ctx.fillRect(mmX-2,mmY-2,mmW+4,mmH+4);
+
+  for(let y=0;y<ROWS;y++){
+    for(let x=0;x<COLS;x++){
+      if(!s.explored[y][x]){ctx.fillStyle='#111';ctx.fillRect(mmX+x*mmScale,mmY+y*mmScale,mmScale,mmScale);continue;}
+      const t=s.maze[y][x];
+      if(t===WALL) ctx.fillStyle='#334155';
+      else if(t===EXIT) ctx.fillStyle='#34d399';
+      else if(t===DOOR_R) ctx.fillStyle='#ef4444';
+      else if(t===DOOR_B) ctx.fillStyle='#3b82f6';
+      else if(t===DOOR_G) ctx.fillStyle='#22c55e';
+      else ctx.fillStyle='#1e293b';
+      ctx.fillRect(mmX+x*mmScale,mmY+y*mmScale,mmScale,mmScale);
+    }
+  }
+  ctx.fillStyle='#3b82f6';
+  ctx.fillRect(mmX+Math.floor(p.x/TILE)*mmScale,mmY+Math.floor(p.y/TILE)*mmScale,mmScale,mmScale);
+  if(s.mode==='twoplayer'&&player2State&&player2State.alive){
+    ctx.fillStyle='#22c55e';
+    ctx.fillRect(mmX+Math.floor(player2State.x/TILE)*mmScale,mmY+Math.floor(player2State.y/TILE)*mmScale,mmScale,mmScale);
+  }
+  for(const m of s.monsters){
+    if(!m.alive) continue;
+    const dist=Math.abs(m.x-p.x)+Math.abs(m.y-p.y);
+    if(dist<TILE*6 || s.mode==='survival' || s.mode==='twoplayer'){
+      ctx.fillStyle=m.color;
+      ctx.fillRect(mmX+Math.floor(m.x/TILE)*mmScale,mmY+Math.floor(m.y/TILE)*mmScale,mmScale,mmScale);
+    }
+  }
+  if(s.boss&&s.boss.alive){
+    const dist=Math.abs(s.boss.x-p.x)+Math.abs(s.boss.y-p.y);
+    if(dist<TILE*8){
+      ctx.fillStyle='#ff0000';
+      const bx=mmX+Math.floor(s.boss.x/TILE)*mmScale, by=mmY+Math.floor(s.boss.y/TILE)*mmScale;
+      ctx.fillRect(bx-1,by-1,mmScale+2,mmScale+2);
+    }
+  }
+
+  // Boss HP bar
+  if(s.boss&&s.boss.alive){
+    const bw=200, bh=12, bx=(W-bw)/2, by=H-30;
+    ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(bx-2,by-2,bw+4,bh+4);
+    ctx.fillStyle='#333';ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle='#ef4444';ctx.fillRect(bx,by,bw*(s.boss.hp/s.boss.maxHp),bh);
+    ctx.strokeStyle='#fff';ctx.lineWidth=0.5;ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+    ctx.fillText('الوحش الرئيسي',W/2,by-4);
+  }
+
+  ctx.restore(); // screenShake
+
+  // Cinematic fade overlay (drawn outside shake)
+  drawFade(ctx);
+}
+
+// ── Level Editor ─────────────────────────────────────────────────────
+const EDITOR_COLS = 25, EDITOR_ROWS = 19, EDITOR_TILE = 16;
+let editorMaze = null;
+let editorTool = WALL;
+const EDITOR_TOOLS = [
+  {id:WALL, name:'جدار', color:'#1e293b'},
+  {id:PATH, name:'ممر', color:'#0f172a'},
+  {id:EXIT, name:'مخرج', color:'#34d399'},
+  {id:TRAP_SPIKE, name:'أشواك', color:'#888'},
+  {id:TRAP_LAVA, name:'حمم', color:'#ef4444'},
+  {id:TRAP_ICE, name:'جليد', color:'#22d3ee'},
+  {id:99, name:'وحش', color:'#ef4444'},
+  {id:98, name:'لاعب', color:'#3b82f6'},
+];
+
+function initEditor(){
+  const eCanvas = document.getElementById('editor-canvas');
+  eCanvas.width = EDITOR_COLS * EDITOR_TILE;
+  eCanvas.height = EDITOR_ROWS * EDITOR_TILE;
+  if(!editorMaze){
+    editorMaze = Array.from({length:EDITOR_ROWS},()=>Array(EDITOR_COLS).fill(WALL));
+    // Border walls
+    for(let y=0;y<EDITOR_ROWS;y++) for(let x=0;x<EDITOR_COLS;x++){
+      if(y===0||y===EDITOR_ROWS-1||x===0||x===EDITOR_COLS-1) editorMaze[y][x]=WALL;
+      else editorMaze[y][x]=PATH;
+    }
+    editorMaze[1][1]=98; // player start
+    editorMaze[EDITOR_ROWS-2][EDITOR_COLS-2]=EXIT;
+  }
+
+  // Toolbar
+  const toolbar = document.getElementById('editor-toolbar');
+  toolbar.innerHTML = EDITOR_TOOLS.map(t =>
+    `<button class="tbtn ${editorTool===t.id?'active':''}" data-tool="${t.id}" style="background:${t.color}33;border-color:${t.color}">${t.name}</button>`
+  ).join('');
+  toolbar.querySelectorAll('.tbtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      editorTool = parseInt(btn.dataset.tool);
+      initEditor(); // refresh toolbar highlight
+    });
+  });
+
+  renderEditor();
+
+  // Mouse drawing
+  let drawing = false;
+  eCanvas.onmousedown = (e)=>{ drawing=true; editorPaint(e); };
+  eCanvas.onmousemove = (e)=>{ if(drawing) editorPaint(e); };
+  eCanvas.onmouseup = ()=> drawing=false;
+  eCanvas.onmouseleave = ()=> drawing=false;
+
+  function editorPaint(e){
+    const rect = eCanvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX-rect.left)/EDITOR_TILE);
+    const y = Math.floor((e.clientY-rect.top)/EDITOR_TILE);
+    if(x<0||x>=EDITOR_COLS||y<0||y>=EDITOR_ROWS) return;
+    if(x===0||x===EDITOR_COLS-1||y===0||y===EDITOR_ROWS-1) return; // keep border
+    editorMaze[y][x] = editorTool;
+    renderEditor();
+  }
+
+  // Load saved levels list
+  renderSavedLevels();
+}
+
+function renderEditor(){
+  const eCanvas = document.getElementById('editor-canvas');
+  const ec = eCanvas.getContext('2d');
+  for(let y=0;y<EDITOR_ROWS;y++){
+    for(let x=0;x<EDITOR_COLS;x++){
+      const t = editorMaze[y][x];
+      const tool = EDITOR_TOOLS.find(tt=>tt.id===t);
+      ec.fillStyle = tool ? tool.color : (t===WALL?'#1e293b':'#0f172a');
+      ec.fillRect(x*EDITOR_TILE, y*EDITOR_TILE, EDITOR_TILE, EDITOR_TILE);
+      ec.strokeStyle='#334155';ec.lineWidth=0.5;
+      ec.strokeRect(x*EDITOR_TILE, y*EDITOR_TILE, EDITOR_TILE, EDITOR_TILE);
+      // Labels
+      if(t===99){ec.fillStyle='#fff';ec.font='8px sans-serif';ec.textAlign='center';ec.fillText('👾',x*EDITOR_TILE+EDITOR_TILE/2,y*EDITOR_TILE+EDITOR_TILE/2+3);}
+      if(t===98){ec.fillStyle='#3b82f6';ec.font='8px sans-serif';ec.textAlign='center';ec.fillText('P',x*EDITOR_TILE+EDITOR_TILE/2,y*EDITOR_TILE+EDITOR_TILE/2+3);}
+      if(t===EXIT){ec.fillStyle='#fff';ec.font='8px sans-serif';ec.textAlign='center';ec.fillText('🚪',x*EDITOR_TILE+EDITOR_TILE/2,y*EDITOR_TILE+EDITOR_TILE/2+3);}
+    }
+  }
+}
+
+function getCustomLevels(){ return JSON.parse(localStorage.getItem('maze_custom_levels')||'[]'); }
+function saveCustomLevel(name, data){
+  const levels = getCustomLevels();
+  levels.push({name, data, date:new Date().toLocaleDateString('ar-EG')});
+  localStorage.setItem('maze_custom_levels', JSON.stringify(levels));
+}
+
+function renderSavedLevels(){
+  const el = document.getElementById('editor-saved-list');
+  const levels = getCustomLevels();
+  if(levels.length===0){el.innerHTML='<p style="color:#64748b;font-size:12px">لا توجد مستويات محفوظة</p>';return;}
+  el.innerHTML = levels.map((l,i)=>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:rgba(15,23,42,.6);border-radius:6px;margin:3px 0;font-size:12px">
+      <span>${l.name} (${l.date||''})</span>
+      <div>
+        <button class="btn btn-small btn-primary ed-play" data-idx="${i}" style="padding:3px 8px;font-size:11px">تشغيل</button>
+        <button class="btn btn-small btn-danger ed-del" data-idx="${i}" style="padding:3px 8px;font-size:11px">حذف</button>
+      </div>
+    </div>`
+  ).join('');
+  el.querySelectorAll('.ed-play').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx = parseInt(btn.dataset.idx);
+      playCustomLevel(getCustomLevels()[idx].data);
+    });
+  });
+  el.querySelectorAll('.ed-del').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx = parseInt(btn.dataset.idx);
+      const levels = getCustomLevels();
+      levels.splice(idx,1);
+      localStorage.setItem('maze_custom_levels', JSON.stringify(levels));
+      renderSavedLevels();
+    });
+  });
+}
+
+function playCustomLevel(mazeData){
+  gameMode = 'custom';
+  player2State = null;
+  persist = {lives:5, weapons:[0,1,2], currentWeapon:0, speedBonus:0, score:0, level:1};
+
+  const maze = JSON.parse(JSON.stringify(mazeData));
+  const explored = Array.from({length:ROWS},()=>Array(COLS).fill(true));
+
+  // Find player start and monsters
+  let px=TILE+TILE/2, py=TILE+TILE/2;
+  const monsterCells = [];
+  const trapList = [];
+  for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
+    if(maze[y][x]===98){maze[y][x]=PATH;px=x*TILE+TILE/2;py=y*TILE+TILE/2;}
+    if(maze[y][x]===99){maze[y][x]=PATH;monsterCells.push([x,y]);}
+    if(maze[y][x]===TRAP_SPIKE||maze[y][x]===TRAP_LAVA||maze[y][x]===TRAP_ICE){
+      trapList.push({x,y,type:maze[y][x],active:true,timer:0});
+      maze[y][x]=PATH;
+    }
+  }
+
+  const monsters = [];
+  const types=['normal','fast','tank','shooter'];
+  monsterCells.forEach(([cx,cy],i)=>{
+    monsters.push(createMonster(cx,cy,types[i%types.length],i));
+  });
+
+  state = {
+    maze, monsters, boss:null, doors:[], doorKeys:[], items:spawnItems(maze,3), traps:trapList, buttons:[], npcs:[],
+    bullets:[], enemyBullets:[], particles:[],
+    player:{x:px, y:py, dir:[1,0], invuln:0, shieldTimer:0, speedTimer:0, smoothX:px, smoothY:py, deathAnim:0, slideDir:null, slideTimer:0, buffTimer:0, buffType:null, ultimateCharge:0, ultimateActive:0, damageTaken:false, trapCooldown:0},
+    keysCollected:{}, explored,
+    score:0, lives:5, level:1,
+    currentWeapon:0, weapons:[0,1,2],
+    lastShot:0, gameOver:false, won:false, flash:0,
+    timer:300*60, startTime:Date.now(),
+    theme:getTheme(1),
+    killsThisLevel:0,
+    mode:'custom'
+  };
+
+  showScreen('game-screen');
+  startFadeIn();
+  if(raf) cancelAnimationFrame(raf);
+  frame=0;
+  loop();
+}
+
+// ── Input Handling ───────────────────────────────────────────────────
+window.addEventListener('keydown',e=>{
+  const k = e.key.toLowerCase();
+  keys[k]=true;
+  if(e.key === 'Enter') keys['enter']=true;
+  if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k)) e.preventDefault();
+});
+window.addEventListener('keyup',e=>{
+  const k = e.key.toLowerCase();
+  keys[k]=false;
+  if(e.key === 'Enter') keys['enter']=false;
+});
+
+// Touch controls
+function touchMove(dir){
+  if(!state||state.gameOver||state.won) return;
+  const p=state.player;
+  p.dir=dir;
+  const spd = 3+persist.speedBonus+(p.speedTimer>0?1.5:0);
+  const nx=p.x+dir[0]*spd*4, ny=p.y+dir[1]*spd*4;
+  if(canMove(state.maze,nx,ny)){p.x=nx;p.y=ny;}
+}
+function touchShoot(){
+  if(!state||state.gameOver||state.won) return;
+  const wep=WEAPONS[state.currentWeapon];
+  const now=Date.now();
+  if(now-state.lastShot<wep.fireRate) return;
+  state.lastShot=now;
+  const p=state.player;
+  playSound(wep.id==='shotgun'?'shotgun':wep.id==='rapid'?'rapid':'shoot');
+  for(let i=0;i<wep.count;i++){
+    const angle=Math.atan2(p.dir[1],p.dir[0])+(wep.count>1?(i-Math.floor(wep.count/2))*wep.spread:(Math.random()-.5)*wep.spread*2);
+    state.bullets.push({x:p.x,y:p.y,dx:Math.cos(angle)*wep.speed,dy:Math.sin(angle)*wep.speed,life:50,damage:wep.damage,color:wep.color,owner:1});
+  }
+}
+
+document.getElementById('t-up').addEventListener('click',()=>touchMove([0,-1]));
+document.getElementById('t-down').addEventListener('click',()=>touchMove([0,1]));
+document.getElementById('t-left').addEventListener('click',()=>touchMove([-1,0]));
+document.getElementById('t-right').addEventListener('click',()=>touchMove([1,0]));
+document.getElementById('t-shoot').addEventListener('click',touchShoot);
+document.getElementById('t-weapon').addEventListener('click',()=>{
+  if(!state) return;
+  const weps=state.weapons;
+  const ci=weps.indexOf(state.currentWeapon);
+  state.currentWeapon=weps[(ci+1)%weps.length];
+});
+document.getElementById('t-ult').addEventListener('click',()=>{
+  if(!state) return;
+  activateUltimate(state, state.player);
+});
+
+// ── Menu Buttons ─────────────────────────────────────────────────────
+document.getElementById('start-btn').addEventListener('click',()=>{ensureAudio();startGame();});
+document.getElementById('survival-btn').addEventListener('click',()=>{ensureAudio();startSurvival();});
+document.getElementById('twoplayer-btn').addEventListener('click',()=>{ensureAudio();startTwoPlayer();});
+document.getElementById('menu-settings-btn').addEventListener('click',()=>{prevScreen='menu';showScreen('settings-screen');});
+document.getElementById('menu-lb-btn').addEventListener('click',()=>{prevScreen='menu';showLeaderboard();});
+document.getElementById('menu-achieve-btn').addEventListener('click',()=>{prevScreen='menu';showAchievementsScreen();});
+document.getElementById('worldmap-btn').addEventListener('click',()=>{prevScreen='menu';showWorldMap();});
+document.getElementById('editor-btn').addEventListener('click',()=>{showScreen('editor-screen');initEditor();});
+
+document.getElementById('settings-back').addEventListener('click',()=>showScreen(prevScreen));
+document.getElementById('lb-back').addEventListener('click',()=>showScreen(prevScreen));
+document.getElementById('achieve-back').addEventListener('click',()=>showScreen(prevScreen));
+document.getElementById('worldmap-back').addEventListener('click',()=>showScreen(prevScreen));
+document.getElementById('editor-back').addEventListener('click',()=>showScreen('menu'));
+
+// Settings toggles
+document.getElementById('snd-toggle').addEventListener('click',function(){
+  settings.sound=!settings.sound;
+  this.textContent=settings.sound?'مفعّل':'معطّل';
+  this.className=settings.sound?'btn btn-small btn-primary':'btn btn-small btn-warning';
+  localStorage.setItem('maze_settings', JSON.stringify(settings));
+});
+document.getElementById('diff-toggle').addEventListener('click',function(){
+  settings.difficulty=(settings.difficulty+1)%3;
+  this.textContent=DIFF_NAMES[settings.difficulty];
+  localStorage.setItem('maze_settings', JSON.stringify(settings));
+});
+
+// Init settings UI
+document.getElementById('snd-toggle').textContent = settings.sound?'مفعّل':'معطّل';
+document.getElementById('snd-toggle').className = settings.sound?'btn btn-small btn-primary':'btn btn-small btn-warning';
+document.getElementById('diff-toggle').textContent = DIFF_NAMES[settings.difficulty];
+
+// Overlay buttons
+document.getElementById('next-btn').addEventListener('click',nextLevel);
+document.getElementById('retry-btn').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show');
+  if(gameMode==='survival') startSurvival();
+  else if(gameMode==='twoplayer') startTwoPlayer();
+  else startGame();
+});
+document.getElementById('menu-btn-overlay').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('show');
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  state=null;
+  showScreen('menu');
+});
+
+function quitGame(){
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  document.getElementById('overlay').classList.remove('show');
+  state=null;
+  showScreen('menu');
+}
+document.getElementById('quit-btn').addEventListener('click',quitGame);
+window.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && state){e.preventDefault();quitGame();}
+});
+
+// Editor buttons
+document.getElementById('editor-save').addEventListener('click',()=>{
+  const name = prompt('اسم المستوى:') || `مستوى ${Date.now()}`;
+  saveCustomLevel(name, editorMaze);
+  renderSavedLevels();
+});
+document.getElementById('editor-play').addEventListener('click',()=>{
+  playCustomLevel(editorMaze);
+});
+document.getElementById('editor-clear').addEventListener('click',()=>{
+  editorMaze = null;
+  initEditor();
+});
+document.getElementById('editor-load').addEventListener('click',()=>{
+  renderSavedLevels();
+});
+
+// ── Fullscreen Support ───────────────────────────────────────────────
+document.getElementById('fs-btn').addEventListener('click',()=>{
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen().catch(()=>{});
+  }
+});
+document.addEventListener('fullscreenchange',()=>{
+  document.getElementById('fs-btn').textContent = document.fullscreenElement ? '⛶' : '⛶';
+});
+
+// ── PWA Service Worker ───────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  // Inline service worker via blob
+  const swCode = `
+    self.addEventListener('install', e => { self.skipWaiting(); });
+    self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request).then(resp => {
+          const c = resp.clone();
+          caches.open('maze-v1').then(cache => cache.put(e.request, c));
+          return resp;
+        }).catch(() => new Response('Offline', {status:503}))
+      )
+      );
+    });
+  `;
+  const swBlob = new Blob([swCode], {type:'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+</script>
+</body>
+</html>
